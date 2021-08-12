@@ -9,6 +9,7 @@ import java.util.List;
 
 @Service
 public class MedicalRecordService {
+
     @Autowired
     private MedicalRecordRepository medicalRecordRepository;
 
@@ -20,7 +21,7 @@ public class MedicalRecordService {
         return medicalRecordRepository.save(medicalRecord);
     }
 
-    public Iterable<MedicalRecord> getMedicalRecord() {
+    public Iterable<MedicalRecord> getMedicalRecords() {
         return medicalRecordRepository.findAll();
     }
 }

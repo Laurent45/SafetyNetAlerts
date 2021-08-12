@@ -12,8 +12,8 @@ public class PersonController {
     @Autowired
     private PersonService personService;
 
-    @GetMapping("/Persons")
-    public Iterable<Person> getPerson() {
+    @GetMapping("/persons")
+    public Iterable<Person> getPersons() {
         return personService.getPersons();
     }
 }
