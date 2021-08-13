@@ -1,10 +1,18 @@
 package com.outsider.safetynetalerts.repository;
 
+import com.outsider.safetynetalerts.model.DataBase;
 import com.outsider.safetynetalerts.model.Person;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PersonRepository extends CrudRepository<Person, Long> {
+public class PersonRepository {
+
+    @Autowired
+    private DataBase dataBase;
+
+    public Iterable<Person> getPersons() {
+        return dataBase.getPersonList();
+    }
 
 }

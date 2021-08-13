@@ -13,15 +13,7 @@ public class MedicalRecordService {
     @Autowired
     private MedicalRecordRepository medicalRecordRepository;
 
-    public Iterable<MedicalRecord> saveMedicalRecords(List<MedicalRecord> medicalRecords) {
-        return medicalRecordRepository.saveAll(medicalRecords);
-    }
-
-    public MedicalRecord saveMedicalRecord(MedicalRecord medicalRecord) {
-        return medicalRecordRepository.save(medicalRecord);
-    }
-
     public Iterable<MedicalRecord> getMedicalRecords() {
-        return medicalRecordRepository.findAll();
+        return medicalRecordRepository.getAllMedicalRecords();
     }
 }
