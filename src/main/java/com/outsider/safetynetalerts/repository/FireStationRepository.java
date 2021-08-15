@@ -9,8 +9,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class FireStationRepository {
 
-    @Autowired
-    private DataBase dataBase;
+    private final DataBase dataBase;
+
+    public FireStationRepository(DataBase dataBase) {
+        this.dataBase = dataBase;
+    }
 
     public Iterable<FireStation> getFireStations() {
         return dataBase.getFireStationList();
