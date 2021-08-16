@@ -45,32 +45,19 @@ public class DataBase {
                 .forEach(mR -> {
                     Person person = getPerson(mR.getFirstName(), mR.getLastName());
                     if (person != null) {
-                        person.setMedicalRecord(new MedicalRecord(mR.getFirstName()
-                                , mR.getLastName()
-                                , mR.getBirthdate()
-                                , mR.getMedications()
-                                , mR.getAllergies()
-                                , null));
-                        mR.setPerson(new Person(person.getFirstName()
-                                , person.getLastName()
-                                , person.getAddress()
-                                , person.getCity()
-                                , person.getZip()
-                                , person.getPhone()
-                                , person.getEmail()
-                                , null, null));
+                        mR.setIdPerson(person.getIdPerson());
+                        person.setIdMedicalRecord(mR.getIdMedicalRecord());
                     }
                 });
 
         this.fireStationList
                 .forEach(fS -> {
-                    List<Person> persons = getPersons(fS.getAddress());
-                    fS.setPersons(new ArrayList<>(persons));
-                    for (Person p : persons) {
-                        p.getFireStations().add(new FireStation(fS.getAddress()
-                                , fS.getStation()
-                                , null));
+                    List<Person> persons = getIdPersons(fS.getAddress());
+                    for (Person person : persons){
+                        person.getIdFireStations().add(fS.getIdFireStation());
+                        fS.getIdPersons().add(person.getIdPerson());
                     }
+
                 });
     }
 
@@ -83,7 +70,7 @@ public class DataBase {
         return null;
     }
 
-    public List<Person> getPersons(String address) {
+    public List<Person> getIdPersons(String address) {
         return this.personList.stream()
                 .filter(p -> p.getAddress().equals(address))
                 .collect(Collectors.toList());

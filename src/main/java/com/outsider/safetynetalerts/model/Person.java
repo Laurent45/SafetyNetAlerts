@@ -6,9 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class Person {
+    static int idCounter = 0;
+    private final int idPerson;
+
+    public Person() {
+        this.idPerson = idCounter++;
+    }
 
     private String firstName;
     private String lastName;
@@ -17,7 +21,7 @@ public class Person {
     private String zip;
     private String phone;
     private String email;
-    private MedicalRecord medicalRecord;
-    private List<FireStation> fireStations = new ArrayList<>();
+    private Integer idMedicalRecord;
+    private List<Integer> idFireStations = new ArrayList<>();
 
 }
