@@ -1,7 +1,10 @@
-package com.outsider.safetynetalerts.model;
+package com.outsider.safetynetalerts.dataBase;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.outsider.safetynetalerts.model.FireStation;
+import com.outsider.safetynetalerts.model.MedicalRecord;
+import com.outsider.safetynetalerts.model.Person;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Data
@@ -37,16 +41,16 @@ public class DataBase {
         this.fireStationList = mapper.readValue(iSFireStation, tRFireStation);
         this.medicalRecordList = mapper.readValue(iSMedicalRecord, tRMedicalRecord);
 
-        createLinks();
     }
 
+    @PostConstruct
     public void createLinks() {
         this.medicalRecordList
                 .forEach(mR -> {
-                    Person person = getPerson(mR.getFirstName(), mR.getLastName());
-                    if (person != null) {
-                        mR.setIdPerson(person.getIdPerson());
-                        person.setIdMedicalRecord(mR.getIdMedicalRecord());
+                    Optional<Person> person = getPerson(mR.getFirstName(), mR.getLastName());
+                    if (person.isPresent()) {
+                        mR.setIdPerson(person.get().getIdPerson());
+                        person.get().setIdMedicalRecord(mR.getIdMedicalRecord());
                     }
                 });
 
@@ -61,13 +65,10 @@ public class DataBase {
                 });
     }
 
-    public Person getPerson(String firstName, String lastName) {
-        for (Person p : this.personList) {
-            if (p.getFirstName().equals(firstName) && p.getLastName().equals(lastName)) {
-                return p;
-            }
-        }
-        return null;
+    public Optional<Person> getPerson(String firstName, String lastName) {
+        return this.personList.stream()
+                .filter(p -> p.getFirstName().equals(firstName) && p.getLastName().equals(lastName))
+                .findFirst();
     }
 
     public List<Person> getIdPersons(String address) {
@@ -75,6 +76,5 @@ public class DataBase {
                 .filter(p -> p.getAddress().equals(address))
                 .collect(Collectors.toList());
     }
-
 
 }

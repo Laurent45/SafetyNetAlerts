@@ -1,9 +1,7 @@
 package com.outsider.safetynetalerts.repository;
 
-import com.outsider.safetynetalerts.model.DataBase;
+import com.outsider.safetynetalerts.dataBase.DataBase;
 import com.outsider.safetynetalerts.model.Person;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
