@@ -23,7 +23,7 @@ public class PersonController {
     /**
      * Create - Add a new Person.
      * @param person - An object of person
-     * @return Person object saved
+     * @return A boolean about the person saved
      */
     @PostMapping("/persons")
     public boolean createPerson(@RequestBody Person person) {

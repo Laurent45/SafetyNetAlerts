@@ -21,12 +21,24 @@ import static org.mockito.Mockito.when;
 class PersonRepositoryTest {
 
     private PersonRepository personRepositoryUT;
+    private List<Person> personList;
     @Mock
     private DataBase mockDataBase;
 
     @BeforeEach
     void setUp() {
         personRepositoryUT = new PersonRepository(mockDataBase);
+        Person person = new Person();
+        person.setFirstName("Lo");
+        person.setLastName("Frazier");
+        personList = new ArrayList<>();
+        personList.add(person);
+        when(mockDataBase.getPersonList()).thenReturn(personList);
+    }
+
+    @AfterEach
+    void cleanUp() {
+        personList.clear();
     }
 
     @Test
@@ -38,33 +50,21 @@ class PersonRepositoryTest {
     @Test
     void savePersonShouldReturnTrue() {
         Person person = new Person();
-        List<Person> personList = new ArrayList<>();
-        when(mockDataBase.getPersonList()).thenReturn(personList);
         assertThat(personRepositoryUT.savePerson(person)).isTrue();
     }
 
     @Test
     void getPersonByIdShouldReturnAnOptionalNotNull() {
-        Person person = new Person();
-        person.setFirstName("Lo");
-        person.setLastName("Frazier");
-        List<Person> personList = new ArrayList<>();
-        personList.add(person);
-        when(mockDataBase.getPersonList()).thenReturn(personList);
-
-        assertThat(personRepositoryUT.getPerson(0)).isPresent();
-
+        assertThat(personRepositoryUT.getPerson(personList.get(0).getIdPerson())).isPresent();
     }
 
     @Test
     void getPersonByFirstNameAndLastNameShouldReturnOptionalNotNull() {
-        Person person = new Person();
-        person.setFirstName("Lo");
-        person.setLastName("Frazier");
-        List<Person> personList = new ArrayList<>();
-        personList.add(person);
-        when(mockDataBase.getPersonList()).thenReturn(personList);
-
         assertThat(personRepositoryUT.getPerson("Lo", "Frazier")).isPresent();
+    }
+
+    @Test
+    void deletePersonShouldReturnTrueIfPersonDeleted() {
+        assertThat(personRepositoryUT.deletePerson(personList.get(0))).isTrue();
     }
 }

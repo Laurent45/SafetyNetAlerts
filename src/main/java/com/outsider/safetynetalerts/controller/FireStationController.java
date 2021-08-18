@@ -2,9 +2,9 @@ package com.outsider.safetynetalerts.controller;
 
 import com.outsider.safetynetalerts.model.FireStation;
 import com.outsider.safetynetalerts.service.FireStationService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class FireStationController {
@@ -15,9 +15,32 @@ public class FireStationController {
         this.fireStationService = fireStationService;
     }
 
-    @GetMapping("/fire_stations")
-    public Iterable<FireStation> getFireStations() {
-        return fireStationService.getFireStations();
+    @GetMapping("/fireStations")
+    public ResponseEntity<Iterable<FireStation>> getFireStations() {
+        return new ResponseEntity<>(fireStationService.getFireStations(),
+                HttpStatus.OK);
     }
+
+    @PostMapping("/fireStations")
+    public void saveFireStation(@RequestBody FireStation fireStation){
+        fireStationService.saveFireStation(fireStation);
+    }
+
+    @PutMapping("/fireStation/{address}")
+    public FireStation updateNumberOfStation(@PathVariable String address,
+                                             @RequestBody int station) {
+        return fireStationService.updateNumberOfStation(address, station);
+    }
+
+    @DeleteMapping("/fireStation/address={address}")
+    public void deleteMappingFireStationAddress(@PathVariable String address) {
+        fireStationService.deleteMappingFireStationAddress(address);
+    }
+
+    @DeleteMapping("/fireStation/id={id}")
+    public void deleteMappingFireStationAddress(@PathVariable int id) {
+        fireStationService.deleteMappingFireStationAddress(id);
+    }
+
 
 }
