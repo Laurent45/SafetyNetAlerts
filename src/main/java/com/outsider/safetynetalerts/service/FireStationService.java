@@ -1,23 +1,29 @@
 package com.outsider.safetynetalerts.service;
 
 import com.outsider.safetynetalerts.model.FireStation;
+import com.outsider.safetynetalerts.model.Person;
 import com.outsider.safetynetalerts.repository.FireStationRepository;
+import com.outsider.safetynetalerts.repository.PersonRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class FireStationService {
 
     private final FireStationRepository fireStationRepository;
+    private final PersonRepository personRepository;
 
-    public FireStationService(FireStationRepository fireStationRepository) {
+    public FireStationService(FireStationRepository fireStationRepository, PersonRepository personRepository) {
         this.fireStationRepository = fireStationRepository;
+        this.personRepository = personRepository;
     }
 
 
     public Iterable<FireStation> getFireStations() {
-        return fireStationRepository.getFireStations();
+        return fireStationRepository.getAllFireStations();
     }
 
     public void saveFireStation(FireStation fireStation) {
@@ -41,6 +47,15 @@ public class FireStationService {
 
     public void deleteMappingFireStationAddress(int station) {
         fireStationRepository.deleteFireStation(station);
+    }
+
+    public List<Person> getPersonsCoverByStationNumber(int stationNumber) {
+        List<Integer> idPersonList = fireStationRepository.getIdPersonCoverByStationNumber(stationNumber);
+        return idPersonList.stream()
+                .map(personRepository::getPerson)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
     }
 }
 

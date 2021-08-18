@@ -19,7 +19,7 @@ public class PersonService {
     }
 
     public Iterable<Person> getPersons() {
-        return personRepository.getPersons();
+        return personRepository.getAllPersons();
     }
 
     public boolean savePerson(Person person) {

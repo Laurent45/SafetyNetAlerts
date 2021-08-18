@@ -5,7 +5,9 @@ import com.outsider.safetynetalerts.model.MedicalRecord;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class MedicalRecordRepository {
@@ -18,10 +20,6 @@ public class MedicalRecordRepository {
 
     public List<MedicalRecord> getAllMedicalRecords() {
         return dataBase.getMedicalRecordList();
-    }
-
-    public boolean saveMedicalRecord(MedicalRecord medicalRecord) {
-        return dataBase.getMedicalRecordList().add(medicalRecord);
     }
 
     public Optional<MedicalRecord> getMedicalRecord(int idMedicalRecord) {
@@ -38,8 +36,25 @@ public class MedicalRecordRepository {
                 .findFirst();
     }
 
+    public Optional<MedicalRecord> getMedicalRecordByIdPerson(int idPerson) {
+        return dataBase.getMedicalRecordList().stream()
+                .filter(mR -> mR.getIdPerson() == idPerson)
+                .findFirst();
+    }
+
+    public boolean saveMedicalRecord(MedicalRecord medicalRecord) {
+        return dataBase.getMedicalRecordList().add(medicalRecord);
+    }
+
     public boolean deleteMedicalRecord(MedicalRecord medicalRecord) {
         return dataBase.getMedicalRecordList().remove(medicalRecord);
+    }
+
+    public Map<Integer, String> getMapIdPersonAndBirthdate (List<Integer> idsPersons) {
+        return dataBase.getMedicalRecordList().stream()
+                .filter(mR -> idsPersons.contains(mR.getIdPerson()))
+                .collect(Collectors.toMap(MedicalRecord::getIdPerson,
+                        MedicalRecord::getBirthdate));
     }
 
 

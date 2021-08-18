@@ -3,6 +3,8 @@ package com.outsider.safetynetalerts.controller;
 import com.outsider.safetynetalerts.model.Person;
 import com.outsider.safetynetalerts.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,8 +18,8 @@ public class PersonController {
      * @return An iterable object of Person
      */
     @GetMapping("/persons")
-    public Iterable<Person> getPersons() {
-        return personService.getPersons();
+    public ResponseEntity<Iterable<Person>> getPersons() {
+        return new ResponseEntity<>(personService.getPersons(), HttpStatus.OK);
     }
 
     /**

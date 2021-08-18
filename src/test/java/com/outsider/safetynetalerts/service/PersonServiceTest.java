@@ -3,7 +3,6 @@ package com.outsider.safetynetalerts.service;
 import com.outsider.safetynetalerts.dataBase.DataBase;
 import com.outsider.safetynetalerts.model.Person;
 import com.outsider.safetynetalerts.repository.PersonRepository;
-import com.outsider.safetynetalerts.service.PersonService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,7 +30,7 @@ public class PersonServiceTest {
     @Test
     public void getPersonsShouldCallGetPersons() {
         personServiceSUT.getPersons();
-        verify(mockPersonRepository, times(1)).getPersons();
+        verify(mockPersonRepository, times(1)).getAllPersons();
     }
 
 

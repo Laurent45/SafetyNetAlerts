@@ -15,12 +15,8 @@ public class PersonRepository {
         this.dataBase = dataBase;
     }
 
-    public Iterable<Person> getPersons() {
+    public Iterable<Person> getAllPersons() {
         return dataBase.getPersonList();
-    }
-
-    public boolean savePerson(Person person) {
-        return dataBase.getPersonList().add(person);
     }
 
     public Optional<Person> getPerson(int idPerson) {
@@ -34,6 +30,10 @@ public class PersonRepository {
                 .filter(p -> p.getFirstName().equals(firstName)
                         && p.getLastName().equals(lastName))
                 .findFirst();
+    }
+
+    public boolean savePerson(Person person) {
+        return dataBase.getPersonList().add(person);
     }
 
     public boolean deletePerson(Person person) {
