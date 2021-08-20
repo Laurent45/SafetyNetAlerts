@@ -5,6 +5,7 @@ import com.outsider.safetynetalerts.repository.PersonRepository;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -18,7 +19,7 @@ public class PersonService {
         this.personRepository = personRepository;
     }
 
-    public Iterable<Person> getPersons() {
+    public List<Person> getPersons() {
         return personRepository.getAllPersons();
     }
 
@@ -54,5 +55,9 @@ public class PersonService {
     public boolean deletePerson(String firstName, String lastName) {
         Optional<Person> person = personRepository.getPerson(firstName, lastName);
         return person.filter(personRepository::deletePerson).isPresent();
+    }
+
+    public List<Person> getPersons (String address) {
+        return personRepository.getPerson(address);
     }
 }

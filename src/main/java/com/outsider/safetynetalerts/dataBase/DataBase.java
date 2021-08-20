@@ -57,7 +57,6 @@ public class DataBase {
                         person.getIdFireStations().add(fS.getIdFireStation());
                         fS.getIdPersons().add(person.getIdPerson());
                     }
-
                 });
     }
 

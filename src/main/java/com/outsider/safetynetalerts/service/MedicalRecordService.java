@@ -84,7 +84,24 @@ public class MedicalRecordService {
                 Integer.parseInt(b[2])
                 , Integer.parseInt(b[1])
                 , Integer.parseInt(b[0]));
-        Period p = Period.between(today, birth);
+        Period p = Period.between(birth, today);
         return p.getYears() > 18;
+    }
+
+    public Map<Integer, Boolean> getMapIdPersonIsAnAdult(List<Person> personList) {
+        List<Integer> idPersons = personList.stream()
+                .map(Person::getIdPerson)
+                .collect(Collectors.toList());
+        return medicalRecordRepository.getMapIdPersonAndBirthdate(idPersons).entrySet()
+                .stream().collect(Collectors.toMap(Map.Entry::getKey
+                        , entry -> isAnAdult(entry.getValue())));
+    }
+
+    public Map<Integer, MedicalRecord> getMapIdPersonMedicalRecord(List<Person> personList) {
+        List<Integer> idPersonList = personList.stream()
+                .map(Person::getIdPerson)
+                .collect(Collectors.toList());
+        return medicalRecordRepository.getMapIdPersonAndMedicalRecord(idPersonList);
+
     }
 }

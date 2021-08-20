@@ -49,14 +49,14 @@ public class FireStationController {
         fireStationService.deleteMappingFireStationAddress(id);
     }
 
-    @GetMapping("/firestation/stationNumber={station_number}")
-    public void getPersonsCoverByStationNumber(@PathVariable("station_number") int stationNumber) {
+    @GetMapping("/firestation")
+    public void getPersonsCoverByStationNumber(@RequestParam("station_number") int stationNumber) {
+        //todo: create a JSON Object that return a list of person and the
+        // count of adult and child
         List<Person> persons =
                 fireStationService.getPersonsCoverByStationNumber(stationNumber);
         Map<Integer, String> idBirthdate =
                 medicalRecordService.getMapIdPersonBirthdate(persons);
-        //todo: create a JSON Object that return a list of person and the
-        // count of adult and child
         System.out.println(persons);
         System.out.println("Adult --> " + medicalRecordService.getNumberOfAdult(idBirthdate));
         System.out.println("Child --> " + medicalRecordService.getNumberOfChild(idBirthdate));

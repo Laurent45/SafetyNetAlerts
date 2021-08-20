@@ -4,7 +4,9 @@ import com.outsider.safetynetalerts.dataBase.DataBase;
 import com.outsider.safetynetalerts.model.Person;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class PersonRepository {
@@ -15,7 +17,7 @@ public class PersonRepository {
         this.dataBase = dataBase;
     }
 
-    public Iterable<Person> getAllPersons() {
+    public List<Person> getAllPersons() {
         return dataBase.getPersonList();
     }
 
@@ -38,5 +40,11 @@ public class PersonRepository {
 
     public boolean deletePerson(Person person) {
         return dataBase.getPersonList().remove(person);
+    }
+
+    public List<Person> getPerson(String address) {
+        return dataBase.getPersonList().stream()
+                .filter(p -> p.getAddress().equals(address))
+                .collect(Collectors.toList());
     }
 }

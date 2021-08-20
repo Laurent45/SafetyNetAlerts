@@ -50,11 +50,19 @@ public class MedicalRecordRepository {
         return dataBase.getMedicalRecordList().remove(medicalRecord);
     }
 
+
     public Map<Integer, String> getMapIdPersonAndBirthdate (List<Integer> idsPersons) {
         return dataBase.getMedicalRecordList().stream()
                 .filter(mR -> idsPersons.contains(mR.getIdPerson()))
                 .collect(Collectors.toMap(MedicalRecord::getIdPerson,
                         MedicalRecord::getBirthdate));
+    }
+
+    public Map<Integer, MedicalRecord> getMapIdPersonAndMedicalRecord (List<Integer> idsPersons) {
+        return dataBase.getMedicalRecordList().stream()
+                .filter(mR -> idsPersons.contains(mR.getIdPerson()))
+                .collect(Collectors.toMap(MedicalRecord::getIdPerson,
+                        medicalRecord -> medicalRecord));
     }
 
 
