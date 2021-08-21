@@ -3,60 +3,35 @@ package com.outsider.safetynetalerts.service;
 import com.outsider.safetynetalerts.model.FireStation;
 import com.outsider.safetynetalerts.model.Person;
 import com.outsider.safetynetalerts.repository.FireStationRepository;
-import com.outsider.safetynetalerts.repository.PersonRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class FireStationService {
+public class FireStationService implements IFireStationService {
 
     private final FireStationRepository fireStationRepository;
-    private final PersonRepository personRepository;
 
-    public FireStationService(FireStationRepository fireStationRepository, PersonRepository personRepository) {
+    public FireStationService(FireStationRepository fireStationRepository) {
         this.fireStationRepository = fireStationRepository;
-        this.personRepository = personRepository;
     }
 
-
+    @Override
     public Iterable<FireStation> getFireStations() {
-        return fireStationRepository.getAllFireStations();
+        return fireStationRepository.getFireStations();
     }
 
-    public void saveFireStation(FireStation fireStation) {
-        fireStationRepository.saveFireStation(fireStation);
-    }
-
-    public FireStation updateNumberOfStation(String address, int station) {
-        Optional<FireStation> fireStationToUpdate =
-                fireStationRepository.getFireStation(address);
-        if (fireStationToUpdate.isPresent()) {
-            FireStation currentFireStation = fireStationToUpdate.get();
-            currentFireStation.setStation(station);
-            return currentFireStation;
-        }
-        return null;
-    }
-
-    public void deleteMappingFireStationAddress(String address) {
-        fireStationRepository.deleteFireStation(address);
-    }
-
-    public void deleteMappingFireStationAddress(int station) {
-        fireStationRepository.deleteFireStation(station);
-    }
-
-    public List<Person> getPersonsCoverByStationNumber(int stationNumber) {
-        List<Integer> idPersonList = fireStationRepository.getIdPersonCoverByStationNumber(stationNumber);
-        return idPersonList.stream()
-                .map(personRepository::getPerson)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+    @Override
+    public List<Person> getPersonsCoverBy(int stationNumber) {
+        return this.fireStationRepository.getFireStations(stationNumber).stream()
+                .map(FireStation::getPersons)
+                .flatMap(List::stream)
                 .collect(Collectors.toList());
     }
+
 }
 
 
