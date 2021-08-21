@@ -4,6 +4,9 @@ import com.outsider.safetynetalerts.dataBase.DataBase;
 import com.outsider.safetynetalerts.model.FireStation;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Repository
 public class FireStationRepository {
 
@@ -14,7 +17,12 @@ public class FireStationRepository {
     }
 
     public Iterable<FireStation> getFireStations() {
-        return dataBase.getFireStationList();
+        return this.dataBase.getFireStationList();
     }
 
+    public List<FireStation> getFireStations(int stationNumber) {
+        return this.dataBase.getFireStationList().stream()
+                .filter(fireStation -> fireStation.getStation() == stationNumber)
+                .collect(Collectors.toList());
+    }
 }
