@@ -1,17 +1,19 @@
 package com.outsider.safetynetalerts.model;
 
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 public class Person {
     static int idCounter = 0;
-    private final int idPerson;
+    private final int id;
 
     public Person() {
-        this.idPerson = idCounter++;
+        this.id = idCounter++;
     }
 
     private String firstName;
@@ -21,7 +23,23 @@ public class Person {
     private String zip;
     private String phone;
     private String email;
-    private Integer idMedicalRecord;
-    private List<Integer> idFireStations = new ArrayList<>();
+    @JsonIgnoreProperties("person")
+    private MedicalRecord medicalRecord;
+    @JsonIgnoreProperties("persons")
+    private List<FireStation> fireStations = new ArrayList<>();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return Objects.equals(firstName, person.firstName) && Objects.equals(lastName, person.lastName) && Objects.equals(address, person.address) && Objects.equals(city, person.city) && Objects.equals(zip, person.zip) && Objects.equals(phone, person.phone) && Objects.equals(email, person.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstName, lastName, address, city, zip, phone, email);
+    }
+
 
 }

@@ -40,48 +40,40 @@ public class DataBase {
         this.personList = mapper.readValue(iSPerson, tRPerson);
         this.fireStationList = mapper.readValue(iSFireStation, tRFireStation);
         this.medicalRecordList = mapper.readValue(iSMedicalRecord, tRMedicalRecord);
-
     }
 
     @PostConstruct
-    public void createLinks() {
-        linkBetweenMedicalRecordAndPerson();
-        linkBetweenFireStationAndPerson();
-    }
-
-    public void linkBetweenFireStationAndPerson() {
-        this.fireStationList
-                .forEach(fS -> {
-                    List<Person> persons = getIdPersons(fS.getAddress());
-                    for (Person person : persons) {
-                        person.getIdFireStations().add(fS.getIdFireStation());
-                        fS.getIdPersons().add(person.getIdPerson());
-                    }
-                });
-    }
-
-    public void linkBetweenMedicalRecordAndPerson() {
+    public void createLinksBetweenPersonAndMedicalRecord() {
         this.medicalRecordList
-                .forEach(mR -> {
-                    Optional<Person> person = getPerson(mR.getFirstName(), mR.getLastName());
+                .forEach(medicalRecord -> {
+                    String firstName = medicalRecord.getFirstName();
+                    String lastName = medicalRecord.getLastName();
+                    Optional<Person> person = this.personList.stream()
+                            .filter(p -> p.getFirstName().equals(firstName)
+                                    && p.getLastName().equals(lastName))
+                            .findFirst();
                     if (person.isPresent()) {
-                        mR.setIdPerson(person.get().getIdPerson());
-                        person.get().setIdMedicalRecord(mR.getIdMedicalRecord());
+                        medicalRecord.setPerson(person.get());
+                        person.get().setMedicalRecord(medicalRecord);
                     }
                 });
     }
 
-    public Optional<Person> getPerson(String firstName, String lastName) {
-        return this.personList.stream()
-                .filter(p -> p.getFirstName().equals(firstName)
-                        && p.getLastName().equals(lastName))
-                .findFirst();
+    @PostConstruct
+    public void createLinksBetweenPersonAndFireStation() {
+        this.fireStationList.forEach(fireStation -> {
+            String address = fireStation.getAddress();
+            for (Person p : this.personList) {
+                if (p.getAddress().equals(address)) {
+                    p.getFireStations().add(fireStation);
+                    fireStation.getPersons().add(p);
+                }
+            }
+        });
     }
 
-    public List<Person> getIdPersons(String address) {
-        return this.personList.stream()
-                .filter(p -> p.getAddress().equals(address))
-                .collect(Collectors.toList());
-    }
+
+
+
 
 }
