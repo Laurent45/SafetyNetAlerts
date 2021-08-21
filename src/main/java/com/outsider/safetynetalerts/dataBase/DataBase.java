@@ -1,7 +1,10 @@
-package com.outsider.safetynetalerts.model;
+package com.outsider.safetynetalerts.dataBase;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.outsider.safetynetalerts.model.FireStation;
+import com.outsider.safetynetalerts.model.MedicalRecord;
+import com.outsider.safetynetalerts.model.Person;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Data
@@ -36,45 +40,40 @@ public class DataBase {
         this.personList = mapper.readValue(iSPerson, tRPerson);
         this.fireStationList = mapper.readValue(iSFireStation, tRFireStation);
         this.medicalRecordList = mapper.readValue(iSMedicalRecord, tRMedicalRecord);
-
-        createLinks();
     }
 
-    public void createLinks() {
+    @PostConstruct
+    public void createLinksBetweenPersonAndMedicalRecord() {
         this.medicalRecordList
-                .forEach(mR -> {
-                    Person person = getPerson(mR.getFirstName(), mR.getLastName());
-                    if (person != null) {
-                        mR.setIdPerson(person.getIdPerson());
-                        person.setIdMedicalRecord(mR.getIdMedicalRecord());
+                .forEach(medicalRecord -> {
+                    String firstName = medicalRecord.getFirstName();
+                    String lastName = medicalRecord.getLastName();
+                    Optional<Person> person = this.personList.stream()
+                            .filter(p -> p.getFirstName().equals(firstName)
+                                    && p.getLastName().equals(lastName))
+                            .findFirst();
+                    if (person.isPresent()) {
+                        medicalRecord.setPerson(person.get());
+                        person.get().setMedicalRecord(medicalRecord);
                     }
-                });
-
-        this.fireStationList
-                .forEach(fS -> {
-                    List<Person> persons = getIdPersons(fS.getAddress());
-                    for (Person person : persons){
-                        person.getIdFireStations().add(fS.getIdFireStation());
-                        fS.getIdPersons().add(person.getIdPerson());
-                    }
-
                 });
     }
 
-    public Person getPerson(String firstName, String lastName) {
-        for (Person p : this.personList) {
-            if (p.getFirstName().equals(firstName) && p.getLastName().equals(lastName)) {
-                return p;
+    @PostConstruct
+    public void createLinksBetweenPersonAndFireStation() {
+        this.fireStationList.forEach(fireStation -> {
+            String address = fireStation.getAddress();
+            for (Person p : this.personList) {
+                if (p.getAddress().equals(address)) {
+                    p.getFireStations().add(fireStation);
+                    fireStation.getPersons().add(p);
+                }
             }
-        }
-        return null;
+        });
     }
 
-    public List<Person> getIdPersons(String address) {
-        return this.personList.stream()
-                .filter(p -> p.getAddress().equals(address))
-                .collect(Collectors.toList());
-    }
+
+
 
 
 }

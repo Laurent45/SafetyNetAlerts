@@ -1,5 +1,6 @@
 package com.outsider.safetynetalerts.controller;
 
+import com.outsider.safetynetalerts.dataBase.DataBase;
 import com.outsider.safetynetalerts.model.Person;
 import com.outsider.safetynetalerts.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +14,12 @@ public class PersonController {
 
     @Autowired
     private PersonService personService;
+    @Autowired
+    private DataBase dataBase;
 
     @GetMapping("/persons")
     public Iterable<Person> getPersons() {
+        //System.out.println(dataBase.getPersonList().get(0));
         return personService.getPersons();
     }
 
