@@ -1,4 +1,4 @@
-package com.outsider.safetynetalerts;
+package com.outsider.safetynetalerts.service;
 
 import com.outsider.safetynetalerts.repository.PersonRepository;
 import com.outsider.safetynetalerts.service.PersonService;
@@ -16,7 +16,7 @@ public class PersonServiceTest {
     private PersonService personServiceSUT;
 
     @Mock
-    private PersonRepository mockPersonRepository = new PersonRepository();
+    private PersonRepository mockPersonRepository;
 
     @BeforeEach
     public void initMocks() {
@@ -26,8 +26,17 @@ public class PersonServiceTest {
     @Test
     public void testGetPersons() {
         personServiceSUT.getPersons();
-        verify(mockPersonRepository, times(1)).getPersons();
+        verify(mockPersonRepository).getPersons();
     }
 
 
+    @Test
+    void savePerson() {
+    }
+
+    @Test
+    void givenAnAddress_whenGetPersonsBy_thenCallGetPersonsBy() {
+        personServiceSUT.getPersonsBy("1, rue de Paris");
+        verify(mockPersonRepository).getPersonsBy("1, rue de Paris");
+    }
 }

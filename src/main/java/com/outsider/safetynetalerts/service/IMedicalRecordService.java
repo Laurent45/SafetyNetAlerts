@@ -15,4 +15,11 @@ public interface IMedicalRecordService {
      * @return a boolean according to the answer.
      */
     boolean isAnAdult(MedicalRecord medicalRecord);
+
+    /**
+     * Calculate the age of medical record's owner
+     * @param medicalRecord - an instance of MedicalRecord
+     * @return an integer that represents the age
+     */
+    int calculationOfAge(MedicalRecord medicalRecord);
 }

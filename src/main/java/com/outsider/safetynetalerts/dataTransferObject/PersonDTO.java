@@ -1,4 +1,4 @@
-package com.outsider.safetynetalerts.model;
+package com.outsider.safetynetalerts.dataTransferObject;
 
 import lombok.Data;
 

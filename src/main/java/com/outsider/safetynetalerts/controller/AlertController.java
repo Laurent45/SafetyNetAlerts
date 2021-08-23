@@ -1,51 +1,87 @@
 package com.outsider.safetynetalerts.controller;
 
-import com.outsider.safetynetalerts.model.AlertFireStationDTO;
-import com.outsider.safetynetalerts.model.Person;
-import com.outsider.safetynetalerts.model.PersonDTO;
+import com.outsider.safetynetalerts.dataTransferObject.*;
 import com.outsider.safetynetalerts.service.IFireStationService;
 import com.outsider.safetynetalerts.service.IMedicalRecordService;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.outsider.safetynetalerts.service.IPersonService;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @RestController
 public class AlertController {
     private final IMedicalRecordService medicalRecordService;
     private final IFireStationService fireStationService;
+    private final IPersonService personService;
     private final ModelMapper modelMapper;
 
 
-    public AlertController(IMedicalRecordService medicalRecordService, IFireStationService fireStationService, ModelMapper modelMapper) {
+    public AlertController(IMedicalRecordService medicalRecordService,
+                           IFireStationService fireStationService,
+                           IPersonService personService,
+                           ModelMapper modelMapper) {
         this.medicalRecordService = medicalRecordService;
         this.fireStationService = fireStationService;
+        this.personService = personService;
         this.modelMapper = modelMapper;
     }
 
     @GetMapping("/firestation")
-    public AlertFireStationDTO fireStationAlert(@RequestParam("stationNumber") int stationNumber) {
-        AlertFireStationDTO alertFireStationDTO = new AlertFireStationDTO();
-        List<Person> personList =
-                fireStationService.getPersonsCoverBy(stationNumber);
-        List<PersonDTO> personDTOList = personList.stream()
-                        .map(person -> modelMapper.map(person, PersonDTO.class))
-                        .collect(Collectors.toList());
-        int nAdult = (int) personList.stream()
-                .map(Person::getMedicalRecord)
-                .filter(medicalRecordService::isAnAdult)
-                .count();
-        int nChildren = personList.size() - nAdult;
-        alertFireStationDTO.setPersonDTOList(personDTOList);
-        alertFireStationDTO.setNAdult(nAdult);
-        alertFireStationDTO.setNChildren(nChildren);
+    public ResponseEntity<Object> fireStationAlert(@RequestParam(
+            "stationNumber") int stationNumber) {
+        List<PersonDTO> personDTOList = new ArrayList<>();
+        AtomicInteger nAdults = new AtomicInteger();
+        AtomicInteger nChildren = new AtomicInteger();
 
-        return alertFireStationDTO;
+        fireStationService.getPersonsCoverBy(stationNumber).forEach(p -> {
+            personDTOList.add(modelMapper.map(p, PersonDTO.class));
+            if (medicalRecordService.isAnAdult(p.getMedicalRecord())) {
+                nAdults.getAndIncrement();
+            } else {
+                nChildren.getAndIncrement();
+            }
+        });
+        if (personDTOList.isEmpty()) {
+            return new ResponseEntity<>(" ", HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(new AlertFireStationDTO(personDTOList
+                , nAdults.get(), nChildren.get()),
+                HttpStatus.OK);
     }
+
+    @GetMapping("/childAlert")
+    public ResponseEntity<Object> childAlert(@RequestParam("address") String address) {
+        List<PersonChildDTO> personChildDTO = new ArrayList<>();
+        List<PersonOtherDTO> personOtherDTO = new ArrayList<>();
+
+        personService.getPersonsBy(address)
+                .forEach(person -> {
+                    if (medicalRecordService.isAnAdult(person.getMedicalRecord())) {
+                        personOtherDTO.add(modelMapper.map(person,
+                                PersonOtherDTO.class));
+                    } else {
+                        PersonChildDTO child = modelMapper.map(person,
+                                PersonChildDTO.class);
+                        child.setAge(medicalRecordService.calculationOfAge(person.getMedicalRecord()));
+                        personChildDTO.add(child);
+                    }
+                });
+
+        if (personChildDTO.isEmpty()) {
+            return new ResponseEntity<>("", HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(new ChildAlertDTO(personChildDTO,
+                personOtherDTO),
+                HttpStatus.OK);
+    }
+
 }

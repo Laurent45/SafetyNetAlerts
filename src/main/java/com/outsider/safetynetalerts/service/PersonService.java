@@ -10,18 +10,27 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Data
-@AllArgsConstructor
 @Service
-public class PersonService {
+public class PersonService implements IPersonService {
 
-    @Autowired
-    private PersonRepository personRepository;
+    private final PersonRepository personRepository;
 
+    public PersonService(PersonRepository personRepository) {
+        this.personRepository = personRepository;
+    }
+
+    @Override
     public Iterable<Person> getPersons() {
         return personRepository.getPersons();
     }
 
+    @Override
     public boolean savePerson(Person person) {
         return personRepository.savePerson(person);
+    }
+
+    @Override
+    public List<Person> getPersonsBy(String address) {
+        return personRepository.getPersonsBy(address);
     }
 }
