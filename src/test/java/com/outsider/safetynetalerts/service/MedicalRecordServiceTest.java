@@ -40,4 +40,12 @@ class MedicalRecordServiceTest {
         assertThat(medicalRecordServiceUT.isAnAdult(medicalR1)).isFalse();
         assertThat(medicalRecordServiceUT.isAnAdult(medicalR2)).isTrue();
     }
+
+    @Test
+    void givenMedicalRecord_whenCalculationOfAge_thenReturnAge() {
+        MedicalRecord medicalRecord = new MedicalRecord();
+        medicalRecord.setBirthdate("12/03/2002");
+
+        assertThat(medicalRecordServiceUT.calculationOfAge(medicalRecord)).isEqualTo(19);
+    }
 }

@@ -25,12 +25,17 @@ public class MedicalRecordService implements IMedicalRecordService{
 
     @Override
     public boolean isAnAdult(MedicalRecord medicalRecord) {
+        return calculationOfAge(medicalRecord) > 18;
+    }
+
+    @Override
+    public int calculationOfAge(MedicalRecord medicalRecord) {
         LocalDate today = LocalDate.now();
         String[] dayMonthYear = medicalRecord.getBirthdate().split("/");
         LocalDate bithdate = LocalDate.of(Integer.parseInt(dayMonthYear[2]),
                 Integer.parseInt(dayMonthYear[1]),
                 Integer.parseInt(dayMonthYear[0]));
         Period period = Period.between(bithdate, today);
-        return period.getYears() > 18;
+        return period.getYears();
     }
 }

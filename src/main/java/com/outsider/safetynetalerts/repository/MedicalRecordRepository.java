@@ -10,8 +10,11 @@ import java.util.List;
 @Repository
 public class MedicalRecordRepository {
 
-    @Autowired
-    private DataBase dataBase;
+    private final DataBase dataBase;
+
+    public MedicalRecordRepository(DataBase dataBase) {
+        this.dataBase = dataBase;
+    }
 
     public List<MedicalRecord> getAllMedicalRecords() {
         return dataBase.getMedicalRecordList();

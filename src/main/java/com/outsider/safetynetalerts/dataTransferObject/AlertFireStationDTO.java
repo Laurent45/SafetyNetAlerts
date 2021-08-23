@@ -1,11 +1,13 @@
-package com.outsider.safetynetalerts.model;
+package com.outsider.safetynetalerts.dataTransferObject;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
+@AllArgsConstructor
 public class AlertFireStationDTO {
     @JsonProperty("persons")
     List<PersonDTO> personDTOList;
