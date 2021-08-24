@@ -20,7 +20,7 @@ public class FireStationRepository {
         return this.dataBase.getFireStationList();
     }
 
-    public List<FireStation> getFireStations(int stationNumber) {
+    public List<FireStation> getFireStationsWith(int stationNumber) {
         return this.dataBase.getFireStationList().stream()
                 .filter(fireStation -> fireStation.getStation() == stationNumber)
                 .collect(Collectors.toList());

@@ -33,7 +33,7 @@ class FireStationRepositoryTest {
     }
 
     @Test
-    void givenNumberStation_whenGetFireStation_thenReturnFireStationList() {
+    void givenNumberStation_whenGetFireStationWith_thenReturnFireStationList() {
         FireStation fireS1 = new FireStation();
         fireS1.setStation(2);
         FireStation fireS2 = new FireStation();
@@ -43,7 +43,7 @@ class FireStationRepositoryTest {
         when(mockDataBase.getFireStationList()).thenReturn(List.of(fireS1,
                 fireS2, fireS3));
         List<FireStation> fireStationList =
-                fireStationRepositoryUT.getFireStations(2);
+                fireStationRepositoryUT.getFireStationsWith(2);
         assertThat(fireStationList).containsOnly(fireS1, fireS3);
     }
 }
