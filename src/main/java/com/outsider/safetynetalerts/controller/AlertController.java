@@ -1,6 +1,7 @@
 package com.outsider.safetynetalerts.controller;
 
 import com.outsider.safetynetalerts.dataTransferObject.*;
+import com.outsider.safetynetalerts.model.Person;
 import com.outsider.safetynetalerts.service.IFireStationService;
 import com.outsider.safetynetalerts.service.IMedicalRecordService;
 import com.outsider.safetynetalerts.service.IPersonService;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @RestController
 public class AlertController {
@@ -83,5 +85,20 @@ public class AlertController {
                 personOtherDTO),
                 HttpStatus.OK);
     }
+
+    @GetMapping("/phoneAlert")
+    public ResponseEntity<Object> phoneAlert(@RequestParam("firestation") int stationNumber) {
+        List<String> phoneNumber =
+                fireStationService.getPersonsCoverBy(stationNumber).stream()
+                .map(Person::getPhone)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(phoneNumber, HttpStatus.OK);
+    }
+
+
+
+
+
+
 
 }

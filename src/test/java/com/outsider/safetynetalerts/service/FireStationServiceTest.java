@@ -39,7 +39,7 @@ class FireStationServiceTest {
         FireStation fireStation = new FireStation();
         fireStation.getPersons().add(p1);
         fireStation.getPersons().add(p2);
-        when(mockFireStationRepository.getFireStations(2)).thenReturn(List.of(fireStation));
+        when(mockFireStationRepository.getFireStationsWith(2)).thenReturn(List.of(fireStation));
 
         List<Person> personList = fireStationServiceUT.getPersonsCoverBy(2);
 
