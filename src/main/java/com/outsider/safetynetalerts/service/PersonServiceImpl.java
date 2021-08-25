@@ -11,11 +11,11 @@ import java.util.List;
 
 @Data
 @Service
-public class PersonService implements IPersonService {
+public class PersonServiceImpl implements IPersonService {
 
     private final PersonRepository personRepository;
 
-    public PersonService(PersonRepository personRepository) {
+    public PersonServiceImpl(PersonRepository personRepository) {
         this.personRepository = personRepository;
     }
 

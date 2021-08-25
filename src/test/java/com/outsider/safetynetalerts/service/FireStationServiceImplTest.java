@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class FireStationServiceTest {
+class FireStationServiceImplTest {
 
     private IFireStationService fireStationServiceUT;
     @Mock
@@ -23,7 +23,7 @@ class FireStationServiceTest {
 
     @BeforeEach
     void setUp() {
-        fireStationServiceUT = new FireStationService(mockFireStationRepository);
+        fireStationServiceUT = new FireStationServiceImpl(mockFireStationRepository);
     }
 
     @Test
