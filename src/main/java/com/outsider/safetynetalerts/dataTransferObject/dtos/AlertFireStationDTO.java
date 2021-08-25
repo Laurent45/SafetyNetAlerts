@@ -1,4 +1,4 @@
-package com.outsider.safetynetalerts.dataTransferObject;
+package com.outsider.safetynetalerts.dataTransferObject.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

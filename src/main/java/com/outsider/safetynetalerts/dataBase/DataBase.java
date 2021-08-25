@@ -14,7 +14,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Data
 @Component
@@ -31,10 +30,10 @@ public class DataBase {
         };
         InputStream iSPerson = TypeReference.class.getResourceAsStream("/json/persons.json");
         TypeReference<List<FireStation>> tRFireStation = new TypeReference<>() {
-        };
+                };
         InputStream iSFireStation = TypeReference.class.getResourceAsStream("/json/fireStations.json");
         TypeReference<List<MedicalRecord>> tRMedicalRecord = new TypeReference<>() {
-        };
+                };
         InputStream iSMedicalRecord = TypeReference.class.getResourceAsStream("/json/medicalRecords.json");
 
         this.personList = mapper.readValue(iSPerson, tRPerson);
@@ -71,9 +70,6 @@ public class DataBase {
             }
         });
     }
-
-
-
 
 
 }

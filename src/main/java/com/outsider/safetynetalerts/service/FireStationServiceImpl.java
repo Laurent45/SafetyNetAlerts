@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class FireStationService implements IFireStationService {
+public class FireStationServiceImpl implements IFireStationService {
 
     private final FireStationRepository fireStationRepository;
 
-    public FireStationService(FireStationRepository fireStationRepository) {
+    public FireStationServiceImpl(FireStationRepository fireStationRepository) {
         this.fireStationRepository = fireStationRepository;
     }
 

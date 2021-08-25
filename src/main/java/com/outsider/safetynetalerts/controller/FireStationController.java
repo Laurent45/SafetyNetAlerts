@@ -1,23 +1,22 @@
 package com.outsider.safetynetalerts.controller;
 
 import com.outsider.safetynetalerts.model.FireStation;
-import com.outsider.safetynetalerts.service.FireStationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.outsider.safetynetalerts.service.FireStationServiceImpl;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class FireStationController {
 
-    private final FireStationService fireStationService;
+    private final FireStationServiceImpl fireStationServiceImpl;
 
-    public FireStationController(FireStationService fireStationService) {
-        this.fireStationService = fireStationService;
+    public FireStationController(FireStationServiceImpl fireStationServiceImpl) {
+        this.fireStationServiceImpl = fireStationServiceImpl;
     }
 
     @GetMapping("/fire_stations")
     public Iterable<FireStation> getFireStations() {
-        return fireStationService.getFireStations();
+        return fireStationServiceImpl.getFireStations();
     }
 
 }

@@ -1,6 +1,8 @@
 package com.outsider.safetynetalerts.controller;
 
-import com.outsider.safetynetalerts.dataTransferObject.*;
+import com.outsider.safetynetalerts.dataTransferObject.dtos.*;
+import com.outsider.safetynetalerts.dataTransferObject.mapper.ChildAlertMapper;
+import com.outsider.safetynetalerts.dataTransferObject.mapper.ChildAlertMapperImpl;
 import com.outsider.safetynetalerts.model.Person;
 import com.outsider.safetynetalerts.service.IFireStationService;
 import com.outsider.safetynetalerts.service.IMedicalRecordService;
@@ -60,45 +62,31 @@ public class AlertController {
     }
 
     @GetMapping("/childAlert")
-    public ResponseEntity<Object> childAlert(@RequestParam("address") String address) {
-        List<PersonChildDTO> personChildDTO = new ArrayList<>();
-        List<PersonOtherDTO> personOtherDTO = new ArrayList<>();
-
-        personService.getPersonsBy(address)
-                .forEach(person -> {
-                    if (medicalRecordService.isAnAdult(person.getMedicalRecord())) {
-                        personOtherDTO.add(modelMapper.map(person,
-                                PersonOtherDTO.class));
-                    } else {
-                        PersonChildDTO child = modelMapper.map(person,
-                                PersonChildDTO.class);
-                        child.setAge(medicalRecordService.calculationOfAge(person.getMedicalRecord()));
-                        personChildDTO.add(child);
-                    }
-                });
-
-        if (personChildDTO.isEmpty()) {
-            return new ResponseEntity<>("", HttpStatus.OK);
-        }
-
-        return new ResponseEntity<>(new ChildAlertDTO(personChildDTO,
-                personOtherDTO),
-                HttpStatus.OK);
+    public ResponseEntity<ChildAlertDTO> childAlert(@RequestParam("address") String address) {
+        List<Person> persons = personService.getPersonsBy(address);
+        ChildAlertDTO childAlertDTO = medicalRecordService.getChildAlertDTO(persons);
+        return ResponseEntity.ok(childAlertDTO);
     }
 
     @GetMapping("/phoneAlert")
     public ResponseEntity<Object> phoneAlert(@RequestParam("firestation") int stationNumber) {
         List<String> phoneNumber =
                 fireStationService.getPersonsCoverBy(stationNumber).stream()
-                .map(Person::getPhone)
-                .collect(Collectors.toList());
+                        .map(Person::getPhone)
+                        .collect(Collectors.toList());
         return new ResponseEntity<>(phoneNumber, HttpStatus.OK);
     }
 
-
-
-
-
+    @GetMapping("/fire")
+    public ResponseEntity<Object> fireAlert(@RequestParam("address") String address) {
+        ChildAlertMapper mapper = new ChildAlertMapperImpl();
+        List<PersonFireDTO> personFireDTOList =
+                personService.getPersonsBy(address).stream()
+                        .map(p -> mapper.personToPersonFireDTO(p,
+                                medicalRecordService.calculationOfAge(p.getMedicalRecord())))
+                        .collect(Collectors.toList());
+        return ResponseEntity.ok(personFireDTOList);
+    }
 
 
 }
