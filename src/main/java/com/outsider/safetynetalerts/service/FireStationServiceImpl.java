@@ -5,6 +5,7 @@ import com.outsider.safetynetalerts.model.Person;
 import com.outsider.safetynetalerts.repository.FireStationRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +29,13 @@ public class FireStationServiceImpl implements IFireStationService {
                 .map(FireStation::getPersons)
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Person> getPersonCoverBy(List<Integer> stationNumbers) {
+        List<Person> personList = new ArrayList<>();
+        stationNumbers.forEach(s -> personList.addAll(getPersonsCoverBy(s)));
+        return personList;
     }
 
 }

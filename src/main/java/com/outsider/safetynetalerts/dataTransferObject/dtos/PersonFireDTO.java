@@ -8,7 +8,7 @@ import java.util.List;
 public class PersonFireDTO {
     private String lastName;
     private String phone;
-    private String age;
+    private int age;
     private List<String> medications;
     private List<String> allergies;
 }

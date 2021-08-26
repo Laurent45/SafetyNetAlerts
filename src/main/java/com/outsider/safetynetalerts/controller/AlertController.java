@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -79,13 +80,14 @@ public class AlertController {
 
     @GetMapping("/fire")
     public ResponseEntity<Object> fireAlert(@RequestParam("address") String address) {
-        ChildAlertMapper mapper = new ChildAlertMapperImpl();
-        List<PersonFireDTO> personFireDTOList =
-                personService.getPersonsBy(address).stream()
-                        .map(p -> mapper.personToPersonFireDTO(p,
-                                medicalRecordService.calculationOfAge(p.getMedicalRecord())))
-                        .collect(Collectors.toList());
-        return ResponseEntity.ok(personFireDTOList);
+        List<Person> personList = personService.getPersonsBy(address);
+        return ResponseEntity.ok(medicalRecordService.getFireAlert(personList));
+    }
+
+    @GetMapping("/flood/stations")
+    public ResponseEntity<Object> floodAlert(@RequestParam("stations") List<Integer> stations) {
+        List<Person> personList = fireStationService.getPersonCoverBy(stations);
+        return ResponseEntity.ok(medicalRecordService.getFloodAlert(personList));
     }
 
 

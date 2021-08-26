@@ -1,10 +1,12 @@
 package com.outsider.safetynetalerts.service;
 
+import com.outsider.safetynetalerts.dataTransferObject.dtos.FireAlertDTO;
 import com.outsider.safetynetalerts.dataTransferObject.dtos.ChildAlertDTO;
+import com.outsider.safetynetalerts.dataTransferObject.dtos.PersonFireDTO;
+import com.outsider.safetynetalerts.model.FireStation;
 import com.outsider.safetynetalerts.model.MedicalRecord;
 import com.outsider.safetynetalerts.model.Person;
 import com.outsider.safetynetalerts.repository.MedicalRecordRepository;
-import org.assertj.core.data.Index;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,8 +14,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -113,5 +115,50 @@ class MedicalRecordServiceImplTest {
 
         assertThat(childAlertDTO.getChildrenList().get(0).getFirstName()).isEqualTo("James");
         assertThat(childAlertDTO.getOtherPersonsList().get(0).getFirstName()).isEqualTo("Mike");
+    }
+
+    @Test
+    void givenPersonList_whenGetFireAlert_thenReturnAlertFireDTO() {
+        Person p = new Person();
+        p.setLastName("Frazier");
+        p.setPhone("123-345");
+        p.setAddress("1, rue de Paris");
+        MedicalRecord mR = new MedicalRecord();
+        mR.setBirthdate("12/03/2010");
+        mR.setMedications(List.of("Paracetamol"));
+        mR.setAllergies(List.of("Pollen"));
+        p.setMedicalRecord(mR);
+        FireStation fR = new FireStation();
+        fR.setStation(3);
+        p.setFireStations(List.of(fR));
+
+        FireAlertDTO dto = medicalRecordServiceUT.getFireAlert(List.of(p));
+
+        PersonFireDTO personFireDTO = dto.getPersonFireDTOList().get(0);
+        assertThat(personFireDTO.getAge()).isEqualTo(11);
+        assertThat(personFireDTO.getLastName()).isEqualTo("Frazier");
+        assertThat(personFireDTO.getAllergies()).contains("Pollen");
+        assertThat(dto.getStationNumbers().get(0)).isEqualTo(3);
+    }
+
+    @Test
+    void givenPersonList_whenGetFloodAlert_thenReturnAMapStringPersonFireDTO() {
+        Person p = new Person();
+        p.setLastName("Frazier");
+        p.setAddress("1, rue de paris");
+        MedicalRecord mR = new MedicalRecord();
+        mR.setBirthdate("12/12/2003");
+        p.setMedicalRecord(mR);
+        Person p1 = new Person();
+        p1.setLastName("McCall");
+        p1.setAddress("2, av de bastille");
+        MedicalRecord mR1 = new MedicalRecord();
+        mR1.setBirthdate("03/04/1988");
+        p1.setMedicalRecord(mR1);
+
+        Map<String, List<PersonFireDTO>> map =
+                medicalRecordServiceUT.getFloodAlert(List.of(p, p1));
+
+        assertThat(map).containsKeys("1, rue de paris", "2, av de bastille");
     }
 }
