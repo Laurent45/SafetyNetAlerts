@@ -1,11 +1,13 @@
 package com.outsider.safetynetalerts.service;
 
+import com.outsider.safetynetalerts.dataTransferObject.dtos.FireAlertDTO;
 import com.outsider.safetynetalerts.dataTransferObject.dtos.ChildAlertDTO;
+import com.outsider.safetynetalerts.dataTransferObject.dtos.PersonFireDTO;
 import com.outsider.safetynetalerts.model.MedicalRecord;
 import com.outsider.safetynetalerts.model.Person;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IMedicalRecordService {
     /**
@@ -48,4 +50,19 @@ public interface IMedicalRecordService {
      * @return an instance of ChildAlertDTO
      */
     ChildAlertDTO getChildAlertDTO(List<Person> persons);
+
+    /**
+     * Work with a list of person about to get an instance of FireAlertDTO.
+     * @param persons - a list of person
+     * @return an instance of FireAlertDTO
+     */
+    FireAlertDTO getFireAlert(List<Person> persons);
+
+    /**
+     * Work with a list of person about to get a map that contains some
+     * PersonFireDTO grouping by address.
+     * @param person - a list of person
+     * @return a map, K = address, V = list of PersonFireDTO
+     */
+    Map<String, List<PersonFireDTO>> getFloodAlert(List<Person> person);
 }

@@ -18,4 +18,11 @@ public interface IFireStationService {
      * @return a list of Persons.
      */
     List<Person> getPersonsCoverBy(int stationNumber);
+
+    /**
+     * Get all persons cover by many station numbers.
+     * @param stationNumbers - a list of station number
+     * @return a list of Persons.
+     */
+    List<Person> getPersonCoverBy(List<Integer> stationNumbers);
 }

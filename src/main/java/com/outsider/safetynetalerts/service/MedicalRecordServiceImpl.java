@@ -1,28 +1,29 @@
 package com.outsider.safetynetalerts.service;
 
 import com.outsider.safetynetalerts.dataTransferObject.dtos.ChildAlertDTO;
+import com.outsider.safetynetalerts.dataTransferObject.dtos.FireAlertDTO;
 import com.outsider.safetynetalerts.dataTransferObject.dtos.PersonChildDTO;
+import com.outsider.safetynetalerts.dataTransferObject.dtos.PersonFireDTO;
 import com.outsider.safetynetalerts.dataTransferObject.mapper.ChildAlertMapper;
 import com.outsider.safetynetalerts.dataTransferObject.mapper.ChildAlertMapperImpl;
+import com.outsider.safetynetalerts.model.FireStation;
 import com.outsider.safetynetalerts.model.MedicalRecord;
 import com.outsider.safetynetalerts.model.Person;
 import com.outsider.safetynetalerts.repository.MedicalRecordRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+@AllArgsConstructor
 @Service
 public class MedicalRecordServiceImpl implements IMedicalRecordService{
 
     private final MedicalRecordRepository medicalRecordRepository;
-
-    public MedicalRecordServiceImpl(MedicalRecordRepository medicalRecordRepository) {
-        this.medicalRecordRepository = medicalRecordRepository;
-    }
 
     @Override
     public Iterable<MedicalRecord> getMedicalRecords() {
@@ -69,5 +70,31 @@ public class MedicalRecordServiceImpl implements IMedicalRecordService{
                         .collect(Collectors.toList());
         List<Person> personOthers = getOnlyAdultPersonList(persons);
         return mapper.toChildAlertDTO(personChildren, personOthers);
+    }
+
+    @Override
+    public FireAlertDTO getFireAlert(List<Person> persons) {
+        ChildAlertMapper mapper = new ChildAlertMapperImpl();
+        List<PersonFireDTO> personFireDTOS = persons.stream()
+                .map(p -> mapper.personToPersonFireDTO(p,
+                        calculationOfAge(p.getMedicalRecord())))
+                .collect(Collectors.toList());
+        List<Integer> stationNumbers = persons.get(0).getFireStations().stream()
+                .map(FireStation::getStation)
+                .collect(Collectors.toList());
+        return new FireAlertDTO(personFireDTOS, stationNumbers);
+    }
+
+    @Override
+    public Map<String, List<PersonFireDTO>> getFloodAlert(List<Person> person) {
+        ChildAlertMapper mapper = new ChildAlertMapperImpl();
+        return person.stream()
+                .collect(Collectors.groupingBy(Person::getAddress))
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey,
+                        v -> v.getValue().stream()
+                                .map(p -> mapper.personToPersonFireDTO(p, calculationOfAge(p.getMedicalRecord())))
+                                .collect(Collectors.toList())));
     }
 }
