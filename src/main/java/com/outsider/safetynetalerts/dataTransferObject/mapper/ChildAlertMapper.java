@@ -1,9 +1,6 @@
 package com.outsider.safetynetalerts.dataTransferObject.mapper;
 
-import com.outsider.safetynetalerts.dataTransferObject.dtos.ChildAlertDTO;
-import com.outsider.safetynetalerts.dataTransferObject.dtos.PersonChildDTO;
-import com.outsider.safetynetalerts.dataTransferObject.dtos.PersonFireDTO;
-import com.outsider.safetynetalerts.dataTransferObject.dtos.PersonOtherDTO;
+import com.outsider.safetynetalerts.dataTransferObject.dtos.*;
 import com.outsider.safetynetalerts.model.Person;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -34,5 +31,12 @@ public abstract class ChildAlertMapper {
     @Mapping(source = "person.medicalRecord.allergies", target = "allergies")
     @Mapping(source = "age", target = "age")
     public abstract PersonFireDTO personToPersonFireDTO (Person person,
+                                                         int age);
+
+    @Mapping(source = "person.medicalRecord.medications", target =
+            "medications")
+    @Mapping(source = "person.medicalRecord.allergies", target = "allergies")
+    @Mapping(source = "age", target = "age")
+    public abstract PersonInfoDTO personToPersonInfoDTO (Person person,
                                                          int age);
 }

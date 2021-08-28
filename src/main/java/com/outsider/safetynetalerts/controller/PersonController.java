@@ -1,25 +1,21 @@
 package com.outsider.safetynetalerts.controller;
 
-import com.outsider.safetynetalerts.dataBase.DataBase;
 import com.outsider.safetynetalerts.model.Person;
-import com.outsider.safetynetalerts.service.PersonServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.outsider.safetynetalerts.service.IPersonService;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@AllArgsConstructor
 public class PersonController {
 
-    @Autowired
-    private PersonServiceImpl personServiceImpl;
-    @Autowired
-    private DataBase dataBase;
+    private final IPersonService personServiceImpl;
 
     @GetMapping("/persons")
     public Iterable<Person> getPersons() {
-        //System.out.println(dataBase.getPersonList().get(0));
         return personServiceImpl.getPersons();
     }
 

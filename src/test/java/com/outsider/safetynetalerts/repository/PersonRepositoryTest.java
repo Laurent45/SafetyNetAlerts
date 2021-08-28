@@ -5,33 +5,43 @@ import com.outsider.safetynetalerts.model.Person;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class PersonRepositoryTest {
 
+    @InjectMocks
     private PersonRepository personRepositoryUT;
     @Mock
     private DataBase mockDataBase;
 
     @BeforeEach
     void setUp() {
-        personRepositoryUT = new PersonRepository(mockDataBase);
     }
 
     @Test
-    void getPersons() {
+    void whenGetPersons_thenGetPersonListOfDataBase() {
+        personRepositoryUT.getPersons();
+        verify(mockDataBase).getPersonList();
     }
 
     @Test
-    void savePerson() {
+    void givenAPerson_whenSavePerson_thenReturnTrue() {
+        List<Person> persons = new ArrayList<>();
+        when(mockDataBase.getPersonList()).thenReturn(persons);
+        Person p = new Person();
+        boolean result = personRepositoryUT.savePerson(p);
+        assertThat(result).isTrue();
     }
 
     @Test
@@ -42,8 +52,48 @@ class PersonRepositoryTest {
         p2.setAddress("1, rue de Monaco");
         when(mockDataBase.getPersonList()).thenReturn(List.of(p1, p2));
 
-        List<Person> personList = personRepositoryUT.getPersonsBy("1, rue de " +
+        List<Person> personList = personRepositoryUT.getPersonsByAddress("1, rue de " +
                 "Monaco");
         assertThat(personList).containsOnly(p2);
+    }
+
+    @Test
+    void givenLastName_whenGetPersonsBy_thenReturnAPersonsList() {
+        Person p = new Person();
+        p.setLastName("Frazier");
+        when(mockDataBase.getPersonList()).thenReturn(List.of(p));
+
+        List<Person> result = personRepositoryUT.getPersonsByLastName(
+                "Frazier");
+
+        assertThat(result).containsOnly(p);
+    }
+
+    @Test
+    void givenLastNameAndFirstName_whenGetPersonsBy_thenReturnAPersonsList() {
+        Person p = new Person();
+        p.setLastName("Frazier");
+        p.setFirstName("James");
+        when(mockDataBase.getPersonList()).thenReturn(List.of(p));
+
+        Optional<Person> result =
+                personRepositoryUT.getPersonsByLastNameAndFirstName(
+                "Frazier", "James");
+
+        assertThat(result.isPresent()).isTrue();
+        assertThat(result.get()).isEqualTo(p);
+    }
+
+    @Test
+    void givenACity_whenGetPersonByCity_thenReturnAListOfPerson() {
+        Person p = new Person();
+        p.setCity("chicago");
+        Person p1 = new Person();
+        p1.setCity("atlanta");
+        when(mockDataBase.getPersonList()).thenReturn(List.of(p, p1));
+
+        List<Person> result = personRepositoryUT.getPersonsByCity("chicago");
+
+        assertThat(result).containsOnly(p);
     }
 }

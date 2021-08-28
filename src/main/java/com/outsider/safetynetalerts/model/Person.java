@@ -1,14 +1,12 @@
 package com.outsider.safetynetalerts.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.context.annotation.Bean;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
 
 @Data
 public class Person {
@@ -26,9 +24,9 @@ public class Person {
     private String zip;
     private String phone;
     private String email;
-    @JsonIgnoreProperties("person")
+    @JsonIgnore
     private MedicalRecord medicalRecord;
-    @JsonIgnoreProperties("persons")
+    @JsonIgnore
     private List<FireStation> fireStations = new ArrayList<>();
 
     @Override

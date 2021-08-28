@@ -18,6 +18,7 @@ public class MedicalRecord {
     private String firstName;
     private String lastName;
     private String birthdate;
+    private int age;
     private List<String> medications;
     private List<String> allergies;
     @JsonIgnoreProperties({"medicalRecord", "fireStations"})
