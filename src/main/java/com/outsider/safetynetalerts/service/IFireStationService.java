@@ -1,5 +1,6 @@
 package com.outsider.safetynetalerts.service;
 
+import com.outsider.safetynetalerts.dataTransferObject.dtos.FireStationAlertDTO;
 import com.outsider.safetynetalerts.model.FireStation;
 import com.outsider.safetynetalerts.model.Person;
 
@@ -25,4 +26,12 @@ public interface IFireStationService {
      * @return a list of Persons.
      */
     List<Person> getPersonCoverBy(List<Integer> stationNumbers);
+
+    /**
+     * Get a person list who are covered by a station number and get a count
+     * of number of adults and children
+     * @param stationNumber - an integer that reprensent a station number
+     * @return an object of FireStationAlertDTO
+     */
+    FireStationAlertDTO getFireStationAlert(int stationNumber);
 }

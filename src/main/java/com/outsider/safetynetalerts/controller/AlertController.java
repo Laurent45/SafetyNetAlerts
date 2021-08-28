@@ -1,65 +1,34 @@
 package com.outsider.safetynetalerts.controller;
 
-import com.outsider.safetynetalerts.dataTransferObject.dtos.*;
-import com.outsider.safetynetalerts.dataTransferObject.mapper.ChildAlertMapper;
-import com.outsider.safetynetalerts.dataTransferObject.mapper.ChildAlertMapperImpl;
+import com.outsider.safetynetalerts.dataTransferObject.dtos.ChildAlertDTO;
+import com.outsider.safetynetalerts.dataTransferObject.dtos.FireStationAlertDTO;
+import com.outsider.safetynetalerts.dataTransferObject.dtos.PersonInfoDTO;
 import com.outsider.safetynetalerts.model.Person;
 import com.outsider.safetynetalerts.service.IFireStationService;
 import com.outsider.safetynetalerts.service.IMedicalRecordService;
 import com.outsider.safetynetalerts.service.IPersonService;
-import org.modelmapper.ModelMapper;
+import javassist.NotFoundException;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+@AllArgsConstructor
 @RestController
 public class AlertController {
     private final IMedicalRecordService medicalRecordService;
     private final IFireStationService fireStationService;
     private final IPersonService personService;
-    private final ModelMapper modelMapper;
-
-
-    public AlertController(IMedicalRecordService medicalRecordService,
-                           IFireStationService fireStationService,
-                           IPersonService personService,
-                           ModelMapper modelMapper) {
-        this.medicalRecordService = medicalRecordService;
-        this.fireStationService = fireStationService;
-        this.personService = personService;
-        this.modelMapper = modelMapper;
-    }
 
     @GetMapping("/firestation")
-    public ResponseEntity<Object> fireStationAlert(@RequestParam(
+    public ResponseEntity<FireStationAlertDTO> fireStationAlert(@RequestParam(
             "stationNumber") int stationNumber) {
-        List<PersonDTO> personDTOList = new ArrayList<>();
-        AtomicInteger nAdults = new AtomicInteger();
-        AtomicInteger nChildren = new AtomicInteger();
-
-        fireStationService.getPersonsCoverBy(stationNumber).forEach(p -> {
-            personDTOList.add(modelMapper.map(p, PersonDTO.class));
-            if (medicalRecordService.isAnAdult(p.getMedicalRecord())) {
-                nAdults.getAndIncrement();
-            } else {
-                nChildren.getAndIncrement();
-            }
-        });
-        if (personDTOList.isEmpty()) {
-            return new ResponseEntity<>(" ", HttpStatus.NOT_FOUND);
-        }
-
-        return new ResponseEntity<>(new AlertFireStationDTO(personDTOList
-                , nAdults.get(), nChildren.get()),
-                HttpStatus.OK);
+        return ResponseEntity.ok(fireStationService.getFireStationAlert(stationNumber));
     }
 
     @GetMapping("/childAlert")
@@ -70,7 +39,7 @@ public class AlertController {
     }
 
     @GetMapping("/phoneAlert")
-    public ResponseEntity<Object> phoneAlert(@RequestParam("firestation") int stationNumber) {
+    public ResponseEntity<List<String>> phoneAlert(@RequestParam("firestation") int stationNumber) {
         List<String> phoneNumber =
                 fireStationService.getPersonsCoverBy(stationNumber).stream()
                         .map(Person::getPhone)
@@ -90,5 +59,23 @@ public class AlertController {
         return ResponseEntity.ok(medicalRecordService.getFloodAlert(personList));
     }
 
+    @GetMapping("/personInfo")
+    public ResponseEntity<List<PersonInfoDTO>> personInfo(@RequestParam("lastName") String lastName
+            , @RequestParam("firstName") String firstName) {
+        try {
+            return ResponseEntity.ok(personService.getPersonInfo(lastName, firstName));
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    @GetMapping("/communityEmail")
+    public ResponseEntity<List<String>> communityEmail(@RequestParam("city") String city) {
+        try {
+            return ResponseEntity.ok().body(personService.getCommunityEmail(city));
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
 
 }
