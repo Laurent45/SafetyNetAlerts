@@ -27,7 +27,7 @@ public class AlertController {
 
     @GetMapping("/firestation")
     public ResponseEntity<FireStationAlertDTO> fireStationAlert(@RequestParam(
-            "stationNumber") int stationNumber) {
+            "station") int stationNumber) {
         return ResponseEntity.ok(fireStationService.getFireStationAlert(stationNumber));
     }
 

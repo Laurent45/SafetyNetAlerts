@@ -1,12 +1,13 @@
 package com.outsider.safetynetalerts.controller;
 
+import com.outsider.safetynetalerts.dataTransferObject.dtos.PersonUpdateDTO;
 import com.outsider.safetynetalerts.model.Person;
 import com.outsider.safetynetalerts.service.IPersonService;
+import javassist.NotFoundException;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
@@ -19,8 +20,32 @@ public class PersonController {
         return personServiceImpl.getPersons();
     }
 
-    @PostMapping("/persons")
-    public boolean createPerson(@RequestBody Person person) {
-        return personServiceImpl.savePerson(person);
+    @PostMapping("/person")
+    public ResponseEntity<Boolean> createPerson(@RequestBody Person person) {
+        boolean ret = personServiceImpl.savePerson(person);
+        return ret ? ResponseEntity.ok(true) :
+                ResponseEntity.internalServerError().body(false);
+    }
+
+    @PutMapping("/person")
+    public ResponseEntity<Person> updatePerson(@RequestParam int id,
+                                       @RequestBody PersonUpdateDTO person) {
+        try {
+            return ResponseEntity.ok(personServiceImpl.updatePerson(id,
+                    person));
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/person")
+    public HttpStatus deletePerson(@RequestParam String firstName,
+                             @RequestParam String lastName) {
+        try {
+            personServiceImpl.deletePerson(lastName, firstName);
+            return HttpStatus.OK;
+        } catch (NotFoundException e) {
+            return HttpStatus.NOT_FOUND;
+        }
     }
 }

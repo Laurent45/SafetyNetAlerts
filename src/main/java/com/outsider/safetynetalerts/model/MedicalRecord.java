@@ -1,6 +1,6 @@
 package com.outsider.safetynetalerts.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.util.List;
@@ -18,10 +18,9 @@ public class MedicalRecord {
     private String firstName;
     private String lastName;
     private String birthdate;
-    private int age;
     private List<String> medications;
     private List<String> allergies;
-    @JsonIgnoreProperties({"medicalRecord", "fireStations"})
+    @JsonIgnore
     private Person person;
 
     @Override

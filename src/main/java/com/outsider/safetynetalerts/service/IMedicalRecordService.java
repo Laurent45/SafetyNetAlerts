@@ -2,9 +2,11 @@ package com.outsider.safetynetalerts.service;
 
 import com.outsider.safetynetalerts.dataTransferObject.dtos.FireAlertDTO;
 import com.outsider.safetynetalerts.dataTransferObject.dtos.ChildAlertDTO;
+import com.outsider.safetynetalerts.dataTransferObject.dtos.MedicalRecordUpdateDTO;
 import com.outsider.safetynetalerts.dataTransferObject.dtos.PersonFireDTO;
 import com.outsider.safetynetalerts.model.MedicalRecord;
 import com.outsider.safetynetalerts.model.Person;
+import javassist.NotFoundException;
 
 import java.util.List;
 import java.util.Map;
@@ -65,4 +67,29 @@ public interface IMedicalRecordService {
      * @return a map, K = address, V = list of PersonFireDTO
      */
     Map<String, List<PersonFireDTO>> getFloodAlert(List<Person> person);
+
+    /**
+     * Save a medical record object in database.
+     * @param medicalRecord - a instance of medical record.
+     * @return a boolean if it's saved
+     * @throws RuntimeException - error while saving
+     */
+    boolean saveMedicalRecord(MedicalRecord medicalRecord) throws RuntimeException;
+
+    /**
+     * Update some medical record fields.
+     * @param id - id of medical record to update
+     * @param mR - a medical record object with new field
+     * @return the new medical record
+     * @throws NotFoundException - id not found
+     */
+    MedicalRecord updateMedicalRecord(int id, MedicalRecordUpdateDTO mR) throws NotFoundException;
+
+    /**
+     * Delete a medical record
+     * @param lastName - last name of this medical record
+     * @param firstName - first name of this medical record
+     * @throws NotFoundException - medical record not found
+     */
+    void deleteMedicalRecord(String lastName, String firstName) throws NotFoundException;
 }

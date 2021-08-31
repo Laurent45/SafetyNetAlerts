@@ -36,11 +36,30 @@ class PersonRepositoryTest {
     }
 
     @Test
+    void givenId_whenGetPersonById_thenReturnAnOptional() {
+        Person p = new Person();
+        when(mockDataBase.getPersonList()).thenReturn(List.of(p));
+        Optional<Person> result = personRepositoryUT.getPersonById(p.getId());
+        assertThat(result.isPresent()).isTrue();
+        assertThat(result.get().getId()).isEqualTo(p.getId());
+    }
+
+    @Test
     void givenAPerson_whenSavePerson_thenReturnTrue() {
         List<Person> persons = new ArrayList<>();
         when(mockDataBase.getPersonList()).thenReturn(persons);
         Person p = new Person();
         boolean result = personRepositoryUT.savePerson(p);
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void givenPerson_whenDeletePerson_thenPersonDeleted() {
+        Person p = new Person();
+        List<Person> pList = new ArrayList<>();
+        pList.add(p);
+        when(mockDataBase.getPersonList()).thenReturn(pList);
+        boolean result = personRepositoryUT.deletePerson(p);
         assertThat(result).isTrue();
     }
 
@@ -77,7 +96,7 @@ class PersonRepositoryTest {
         when(mockDataBase.getPersonList()).thenReturn(List.of(p));
 
         Optional<Person> result =
-                personRepositoryUT.getPersonsByLastNameAndFirstName(
+                personRepositoryUT.getPersonByLastNameAndFirstName(
                 "Frazier", "James");
 
         assertThat(result.isPresent()).isTrue();

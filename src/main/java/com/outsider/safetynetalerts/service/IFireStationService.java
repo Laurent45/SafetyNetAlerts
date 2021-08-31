@@ -3,6 +3,7 @@ package com.outsider.safetynetalerts.service;
 import com.outsider.safetynetalerts.dataTransferObject.dtos.FireStationAlertDTO;
 import com.outsider.safetynetalerts.model.FireStation;
 import com.outsider.safetynetalerts.model.Person;
+import javassist.NotFoundException;
 
 import java.util.List;
 
@@ -34,4 +35,28 @@ public interface IFireStationService {
      * @return an object of FireStationAlertDTO
      */
     FireStationAlertDTO getFireStationAlert(int stationNumber);
+
+    /**
+     * Update the number of station number of a fireStation object.
+     * @param fireStation - a fireStation object with new fields
+     * @return a fireStation Object updated
+     * @throws NotFoundException - fireStation object not found
+     */
+    FireStation updateFireStation(FireStation fireStation) throws NotFoundException;
+
+    /**
+     * Save a fireStation object.
+     * @param fireStation - fireStation object to save
+     * @return a boolean if it's saved.
+     * @throws RuntimeException - error while saving
+     */
+    boolean saveFireStation(FireStation fireStation) throws RuntimeException;
+
+    /**
+     * Delete a fireStation object.
+     * @param address - address of fireStation object
+     * @param stationNumber - number of station number object
+     * @throws NotFoundException - fireStation object not found
+     */
+    void deleteFireStation(String address, int stationNumber) throws NotFoundException;
 }
