@@ -1,8 +1,10 @@
 package com.outsider.safetynetalerts.service;
 
+import com.outsider.safetynetalerts.dataTransferObject.dtos.PersonUpdateDTO;
 import com.outsider.safetynetalerts.model.FireStation;
 import com.outsider.safetynetalerts.model.Person;
 import com.outsider.safetynetalerts.repository.FireStationRepository;
+import javassist.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,8 +13,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,6 +35,46 @@ class FireStationServiceImplTest {
     void whenGetFireStations_thenCallGetFireStations() {
         fireStationServiceUT.getFireStations();
         verify(mockFireStationRepository).getFireStations();
+    }
+
+    @Test
+    public void givenAddress_whenUpdateFireStation_thenReturnFireStationUpdated() throws NotFoundException {
+        FireStation fireStation = new FireStation();
+        FireStation fR = new FireStation();
+        fR.setAddress("1, rue de Paris");
+        fR.setStation(4);
+        when(mockFireStationRepository.getFireStationByAddress("1, rue de " +
+                "Paris")).thenReturn(Optional.of(fireStation));
+
+        FireStation update = fireStationServiceUT.updateFireStation(fR);
+        assertThat(update.getStation()).isEqualTo(4);
+    }
+
+    @Test
+    void givenFireStation_whenSaveFireStation_thenCallSaveFireStation() {
+        FireStation fireStation = new FireStation();
+        when(mockFireStationRepository.saveFireStation(fireStation)).thenReturn(true);
+        boolean result = fireStationServiceUT.saveFireStation(fireStation);
+        verify(mockFireStationRepository).saveFireStation(fireStation);
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void givenAddressAndStationNumber_whenDeleteFireStation_thenFireStationDeleted() throws NotFoundException {
+        FireStation fireStation = new FireStation();
+        when(mockFireStationRepository.getFireStationByAddressAndStationNumber("1, rue de Paris",
+                3)).thenReturn(Optional.of(fireStation));
+        fireStationServiceUT.deleteFireStation("1, rue de Paris", 3);
+        verify(mockFireStationRepository).deleteFireStation(fireStation);
+    }
+
+    @Test
+    void givenAddressOrAndStationNumberUnknown_whenDeleteFireStation_throwNotFoundException() {
+        when(mockFireStationRepository
+                .getFireStationByAddressAndStationNumber("1, rue de Paris", 4))
+                .thenReturn(Optional.empty());
+        assertThatThrownBy(() -> fireStationServiceUT.deleteFireStation("1, rue de Paris", 4))
+                .isInstanceOf(NotFoundException.class);
     }
 
     @Test

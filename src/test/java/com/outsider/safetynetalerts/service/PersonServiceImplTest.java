@@ -1,6 +1,7 @@
 package com.outsider.safetynetalerts.service;
 
 import com.outsider.safetynetalerts.dataTransferObject.dtos.PersonInfoDTO;
+import com.outsider.safetynetalerts.dataTransferObject.dtos.PersonUpdateDTO;
 import com.outsider.safetynetalerts.model.MedicalRecord;
 import com.outsider.safetynetalerts.model.Person;
 import com.outsider.safetynetalerts.repository.PersonRepository;
@@ -37,14 +38,46 @@ public class PersonServiceImplTest {
     }
 
     @Test
+    public void givenPersonAndId_whenUpdatePerson_thenReturnPersonUpdated() throws NotFoundException {
+        Person p = new Person();
+        PersonUpdateDTO p1 = new PersonUpdateDTO();
+        p1.setEmail("newemail@email.com");
+        when(mockPersonRepository.getPersonById(0)).thenReturn(Optional.of(p));
+
+        Person update = personServiceImplSUT.updatePerson(0, p1);
+        assertThat(update.getEmail()).isEqualTo("newemail@email.com");
+        assertThat(p1.getEmail()).isEqualTo("newemail@email.com");
+    }
+
+    @Test
     void givenPerson_whenSavePerson_thenCallSavePerson() {
         Person p = new Person();
+        when(mockPersonRepository.savePerson(p)).thenReturn(true);
         personServiceImplSUT.savePerson(p);
         verify(mockPersonRepository).savePerson(p);
     }
 
     @Test
-    void givenAnAddress_whenGetPersonsBy_thenCallGetPersonsBy() {
+    void givenFullName_whenDeletePerson_thenPersonDeleted() throws NotFoundException {
+        Person p = new Person();
+        p.setFirstName("James");
+        p.setLastName("Frazier");
+        when(mockPersonRepository.getPersonByLastNameAndFirstName("Frazier",
+                "James")).thenReturn(Optional.of(p));
+        personServiceImplSUT.deletePerson("Frazier", "James");
+        verify(mockPersonRepository).deletePerson(p);
+    }
+
+    @Test
+    void givenPersonUnknown_whenDeletePerson_throwNotFoundException() {
+        when(mockPersonRepository.getPersonByLastNameAndFirstName("Frazier",
+                "James")).thenReturn(Optional.empty());
+        assertThatThrownBy(() -> personServiceImplSUT.deletePerson("Frazier", "James"))
+                .isInstanceOf(NotFoundException.class);
+    }
+
+    @Test
+    void givenAnAddress_whenGetPersonsBy_thenCallGetPersonsByAddress() {
         personServiceImplSUT.getPersonsBy("1, rue de Paris");
         verify(mockPersonRepository).getPersonsByAddress("1, rue de Paris");
     }
@@ -63,7 +96,7 @@ public class PersonServiceImplTest {
         p1.setFirstName("Alex");
         p1.setEmail("frazier_junior@mail.fr");
         Optional<Person> optionalPerson = Optional.of(p);
-        when(mockPersonRepository.getPersonsByLastNameAndFirstName(any(),
+        when(mockPersonRepository.getPersonByLastNameAndFirstName(any(),
                 any())).thenReturn(optionalPerson);
         when(mockPersonRepository.getPersonsByLastName("Frazier")).thenReturn(List.of(p, p1));
         when(mockMedicalRecordService.calculationOfAge(p.getMedicalRecord())).thenReturn(1);
@@ -87,7 +120,7 @@ public class PersonServiceImplTest {
         p.setEmail("frazier@mail.fr");
         p.setMedicalRecord(mR);
         Optional<Person> optionalPerson = Optional.of(p);
-        when(mockPersonRepository.getPersonsByLastNameAndFirstName(any(),
+        when(mockPersonRepository.getPersonByLastNameAndFirstName(any(),
                 any())).thenReturn(optionalPerson);
         when(mockPersonRepository.getPersonsByLastName("Frazier")).thenReturn(List.of(p));
         when(mockMedicalRecordService.calculationOfAge(p.getMedicalRecord())).thenReturn(1);
@@ -101,7 +134,7 @@ public class PersonServiceImplTest {
 
     @Test
     void givenFullNameUnknown_whenGetPersonInfo_thenThrowAnException() {
-        when(mockPersonRepository.getPersonsByLastNameAndFirstName(any(),
+        when(mockPersonRepository.getPersonByLastNameAndFirstName(any(),
                 any())).thenReturn(Optional.empty());
         assertThatThrownBy(() -> personServiceImplSUT.getPersonInfo(
                 "Frazier",

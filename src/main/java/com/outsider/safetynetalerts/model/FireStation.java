@@ -19,7 +19,7 @@ public class FireStation {
 
     private String address;
     private int station;
-    @JsonIgnoreProperties("fireStations")
+    @JsonIgnore
     private List<Person> persons = new ArrayList<>();
 
     @Override

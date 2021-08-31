@@ -1,15 +1,13 @@
 package com.outsider.safetynetalerts.service;
 
-import com.outsider.safetynetalerts.dataTransferObject.dtos.ChildAlertDTO;
-import com.outsider.safetynetalerts.dataTransferObject.dtos.FireAlertDTO;
-import com.outsider.safetynetalerts.dataTransferObject.dtos.PersonChildDTO;
-import com.outsider.safetynetalerts.dataTransferObject.dtos.PersonFireDTO;
+import com.outsider.safetynetalerts.dataTransferObject.dtos.*;
 import com.outsider.safetynetalerts.dataTransferObject.mapper.ChildAlertMapper;
 import com.outsider.safetynetalerts.dataTransferObject.mapper.ChildAlertMapperImpl;
 import com.outsider.safetynetalerts.model.FireStation;
 import com.outsider.safetynetalerts.model.MedicalRecord;
 import com.outsider.safetynetalerts.model.Person;
 import com.outsider.safetynetalerts.repository.MedicalRecordRepository;
+import javassist.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +15,7 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -96,5 +95,43 @@ public class MedicalRecordServiceImpl implements IMedicalRecordService{
                         v -> v.getValue().stream()
                                 .map(p -> mapper.personToPersonFireDTO(p, calculationOfAge(p.getMedicalRecord())))
                                 .collect(Collectors.toList())));
+    }
+
+    @Override
+    public boolean saveMedicalRecord(MedicalRecord medicalRecord) throws RuntimeException {
+        boolean ret = medicalRecordRepository.saveMedicalRecord(medicalRecord);
+        if (!ret) {
+            throw new RuntimeException("error while saved");
+        }
+        return true;
+    }
+
+    @Override
+    public MedicalRecord updateMedicalRecord(int id, MedicalRecordUpdateDTO mR) throws NotFoundException {
+        Optional<MedicalRecord> medicalRecord =
+                medicalRecordRepository.getMedicalRecordById(id);
+        if (medicalRecord.isEmpty()) {
+            throw new NotFoundException("medical record id not found");
+        }
+        if (!(mR.getBirthdate().isEmpty())) {
+            medicalRecord.get().setBirthdate(mR.getBirthdate());
+        }
+        if (!(mR.getMedications().isEmpty())) {
+            medicalRecord.get().setMedications(mR.getMedications());
+        }
+        if (!(mR.getAllergies().isEmpty())) {
+            medicalRecord.get().setAllergies(mR.getAllergies());
+        }
+        return medicalRecord.get();
+    }
+
+    @Override
+    public void deleteMedicalRecord(String lastName, String firstName) throws NotFoundException {
+        Optional<MedicalRecord> medicalRecord =
+                medicalRecordRepository.getPersonByLastNameAndFirstName(lastName, firstName);
+        if (medicalRecord.isEmpty()) {
+            throw new NotFoundException("medical record not found");
+        }
+        medicalRecordRepository.deleteMedicalRecord(medicalRecord.get());
     }
 }

@@ -1,12 +1,11 @@
 package com.outsider.safetynetalerts.service;
 
-import com.outsider.safetynetalerts.dataTransferObject.dtos.FireAlertDTO;
-import com.outsider.safetynetalerts.dataTransferObject.dtos.ChildAlertDTO;
-import com.outsider.safetynetalerts.dataTransferObject.dtos.PersonFireDTO;
+import com.outsider.safetynetalerts.dataTransferObject.dtos.*;
 import com.outsider.safetynetalerts.model.FireStation;
 import com.outsider.safetynetalerts.model.MedicalRecord;
 import com.outsider.safetynetalerts.model.Person;
 import com.outsider.safetynetalerts.repository.MedicalRecordRepository;
+import javassist.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,9 +15,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class MedicalRecordServiceImplTest {
@@ -36,6 +38,49 @@ class MedicalRecordServiceImplTest {
     void whenGetMedicalRecords_thenCallGetMedicalRecords() {
         medicalRecordServiceUT.getMedicalRecords();
         verify(mockMedicalRecordRepository).getAllMedicalRecords();
+    }
+
+    @Test
+    void givenMedicalRecord_whenSaveMedicalRecord_thenCallSaveMedicalRecord() {
+        MedicalRecord medicalRecord = new MedicalRecord();
+        when(mockMedicalRecordRepository.saveMedicalRecord(medicalRecord)).thenReturn(true);
+        boolean result =
+                medicalRecordServiceUT.saveMedicalRecord(medicalRecord);
+        verify(mockMedicalRecordRepository).saveMedicalRecord(medicalRecord);
+        assertThat(result).isTrue();
+
+    }
+
+    @Test
+    public void givenMedicalRecordAndId_whenUpdateMedicalRecord_thenReturnMedicalRecordUpdated()
+            throws NotFoundException {
+        MedicalRecord mR = new MedicalRecord();
+        MedicalRecordUpdateDTO mR1 = new MedicalRecordUpdateDTO();
+        mR1.setBirthdate("12/02/2003");
+        when(mockMedicalRecordRepository.getMedicalRecordById(0)).thenReturn(Optional.of(mR));
+
+        MedicalRecord update = medicalRecordServiceUT.updateMedicalRecord(0,
+                mR1);
+        assertThat(update.getBirthdate()).isEqualTo("12/02/2003");
+        assertThat(mR1.getBirthdate()).isEqualTo("12/02/2003");
+    }
+
+    @Test
+    void givenFullName_whenDeletePerson_thenPersonDeleted() throws NotFoundException {
+        MedicalRecord medicalRecord = new MedicalRecord();
+        medicalRecord.setFirstName("James");
+        medicalRecord.setLastName("Frazier");
+        when(mockMedicalRecordRepository.getPersonByLastNameAndFirstName("Frazier",
+                "James")).thenReturn(Optional.of(medicalRecord));
+        medicalRecordServiceUT.deleteMedicalRecord("Frazier", "James");
+        verify(mockMedicalRecordRepository).deleteMedicalRecord(medicalRecord);
+    }
+
+    @Test
+    void givenPersonUnknown_whenDeletePerson_throwNotFoundException() {
+        when(mockMedicalRecordRepository.getPersonByLastNameAndFirstName("Frazier",
+                "James")).thenReturn(Optional.empty());
+        assertThatThrownBy(() -> medicalRecordServiceUT.deleteMedicalRecord("Frazier", "James")).isInstanceOf(NotFoundException.class);
     }
 
     @Test

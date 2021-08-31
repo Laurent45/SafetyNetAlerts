@@ -1,6 +1,7 @@
 package com.outsider.safetynetalerts.service;
 
 import com.outsider.safetynetalerts.dataTransferObject.dtos.PersonInfoDTO;
+import com.outsider.safetynetalerts.dataTransferObject.dtos.PersonUpdateDTO;
 import com.outsider.safetynetalerts.model.Person;
 import javassist.NotFoundException;
 
@@ -18,8 +19,9 @@ public interface IPersonService {
      * Save a person object in database.
      * @param person - a instance of person.
      * @return a boolean if it's saved.
+     * @throws RuntimeException - error while saving
      */
-    boolean savePerson(Person person);
+    boolean savePerson(Person person) throws RuntimeException;
 
     /**
      * Get all persons if their addresses is equal
@@ -44,4 +46,21 @@ public interface IPersonService {
      * @return an email list
      */
     List<String> getCommunityEmail(String city) throws NotFoundException;
+
+    /**
+     * Update some person fields.
+     * @param id - id of person to update
+     * @param person - a person object with new fields
+     * @throws NotFoundException - person not found
+     * @return the new person
+     */
+    Person updatePerson(int id, PersonUpdateDTO person) throws NotFoundException;
+
+    /**
+     * Delete a person.
+     * @param lastName - last name of this person
+     * @param firstName - first name of this person
+     * @throws NotFoundException - person not found
+     */
+    void deletePerson(String lastName, String firstName) throws NotFoundException;
 }

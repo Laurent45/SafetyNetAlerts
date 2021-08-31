@@ -9,11 +9,13 @@ import com.outsider.safetynetalerts.dataTransferObject.mapper.MapperImpl;
 import com.outsider.safetynetalerts.model.FireStation;
 import com.outsider.safetynetalerts.model.Person;
 import com.outsider.safetynetalerts.repository.FireStationRepository;
+import javassist.NotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -62,6 +64,40 @@ public class FireStationServiceImpl implements IFireStationService {
 
         return new FireStationAlertDTO(personDTOList, nAdults.get(),
                 nChildren.get());
+    }
+
+    @Override
+    public FireStation updateFireStation(FireStation fireStation) throws NotFoundException {
+        Optional<FireStation> fR =
+                fireStationRepository.getFireStationByAddress(fireStation.getAddress());
+        if (fR.isEmpty()) {
+            throw new NotFoundException("fireStation object has been not " +
+                    "found");
+        }
+        if (fireStation.getStation() != 0) {
+            fR.get().setStation(fireStation.getStation());
+        }
+        return fR.get();
+    }
+
+    @Override
+    public boolean saveFireStation(FireStation fireStation) throws RuntimeException {
+        boolean ret = fireStationRepository.saveFireStation(fireStation);
+        if (!ret) {
+            throw new RuntimeException("error while saving");
+        }
+        return true;
+    }
+
+    @Override
+    public void deleteFireStation(String address, int stationNumber) throws NotFoundException {
+        Optional<FireStation> fireStation =
+                fireStationRepository.getFireStationByAddressAndStationNumber(address, stationNumber);
+        if (fireStation.isEmpty()) {
+            throw new NotFoundException("fireStation object has benn not " +
+                    "found");
+        }
+        fireStationRepository.deleteFireStation(fireStation.get());
     }
 
 }
