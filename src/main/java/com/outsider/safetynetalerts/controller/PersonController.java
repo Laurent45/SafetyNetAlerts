@@ -39,13 +39,13 @@ public class PersonController {
     }
 
     @DeleteMapping("/person")
-    public HttpStatus deletePerson(@RequestParam String firstName,
+    public ResponseEntity<String> deletePerson(@RequestParam String firstName,
                              @RequestParam String lastName) {
         try {
             personServiceImpl.deletePerson(lastName, firstName);
-            return HttpStatus.OK;
+            return ResponseEntity.ok("");
         } catch (NotFoundException e) {
-            return HttpStatus.NOT_FOUND;
+            return ResponseEntity.notFound().build();
         }
     }
 }

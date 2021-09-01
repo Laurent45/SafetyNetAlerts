@@ -4,6 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-public class PersonPhoneAlert {
+public class PersonPhoneAlertDTO {
     private String phone;
 }

@@ -16,6 +16,8 @@ public abstract class ChildAlertMapper {
 
     public abstract PersonOtherDTO personToPersonOtherDTO(Person person);
 
+    public abstract PersonDTO personToPersonDTO(Person person);
+
     public abstract List<PersonOtherDTO> personListToPersonOtherDTOList(List<Person> personList);
 
     public ChildAlertDTO toChildAlertDTO(List<PersonChildDTO> personChildDTOS,

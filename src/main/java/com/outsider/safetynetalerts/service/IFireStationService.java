@@ -18,23 +18,34 @@ public interface IFireStationService {
      * Get all persons cover by a station number.
      * @param stationNumber - an integer that represents the number of station.
      * @return a list of Persons.
+     * @throws NotFoundException - number of stationNumber not found
      */
-    List<Person> getPersonsCoverBy(int stationNumber);
+    List<Person> getPersonsCoverBy(int stationNumber) throws NotFoundException;
 
     /**
      * Get all persons cover by many station numbers.
      * @param stationNumbers - a list of station number
      * @return a list of Persons.
+     * @throws NotFoundException - number of stationNumber not found
      */
-    List<Person> getPersonCoverBy(List<Integer> stationNumbers);
+    List<Person> getPersonCoverBy(List<Integer> stationNumbers) throws NotFoundException;
 
     /**
      * Get a person list who are covered by a station number and get a count
      * of number of adults and children
-     * @param stationNumber - an integer that reprensent a station number
+     * @param stationNumber - an integer that represent a station number
      * @return an object of FireStationAlertDTO
+     * @throws NotFoundException - number of stationNumber not found
      */
-    FireStationAlertDTO getFireStationAlert(int stationNumber);
+    FireStationAlertDTO getFireStationAlert(int stationNumber) throws NotFoundException;
+
+    /**
+     * Get a list of phone number of persons who are cover by a station.
+     * @param stationNumber - an integer that represents a station number
+     * @return a list of phone number
+     * @throws NotFoundException - number of stationNumber not found
+     */
+    List<String> getPhonePersonsCoverBy(int stationNumber) throws NotFoundException;
 
     /**
      * Update the number of station number of a fireStation object.

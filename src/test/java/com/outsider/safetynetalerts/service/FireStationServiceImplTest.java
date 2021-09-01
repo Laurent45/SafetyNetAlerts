@@ -78,7 +78,7 @@ class FireStationServiceImplTest {
     }
 
     @Test
-    void givenStationNumber_whenGetPersonsCoverBy_thenReturnAPersonList() {
+    void givenStationNumber_whenGetPersonsCoverBy_thenReturnAPersonList() throws NotFoundException {
         Person p1 = new Person();
         Person p2 = new Person();
         FireStation fireStation = new FireStation();

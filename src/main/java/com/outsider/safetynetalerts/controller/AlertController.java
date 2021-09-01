@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
@@ -28,7 +27,11 @@ public class AlertController {
     @GetMapping("/firestation")
     public ResponseEntity<FireStationAlertDTO> fireStationAlert(@RequestParam(
             "station") int stationNumber) {
-        return ResponseEntity.ok(fireStationService.getFireStationAlert(stationNumber));
+        try {
+            return ResponseEntity.ok(fireStationService.getFireStationAlert(stationNumber));
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/childAlert")
@@ -40,11 +43,11 @@ public class AlertController {
 
     @GetMapping("/phoneAlert")
     public ResponseEntity<List<String>> phoneAlert(@RequestParam("firestation") int stationNumber) {
-        List<String> phoneNumber =
-                fireStationService.getPersonsCoverBy(stationNumber).stream()
-                        .map(Person::getPhone)
-                        .collect(Collectors.toList());
-        return new ResponseEntity<>(phoneNumber, HttpStatus.OK);
+        try {
+            return ResponseEntity.ok(fireStationService.getPhonePersonsCoverBy(stationNumber));
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/fire")
@@ -55,7 +58,12 @@ public class AlertController {
 
     @GetMapping("/flood/stations")
     public ResponseEntity<Object> floodAlert(@RequestParam("stations") List<Integer> stations) {
-        List<Person> personList = fireStationService.getPersonCoverBy(stations);
+        List<Person> personList;
+        try {
+            personList = fireStationService.getPersonCoverBy(stations);
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(medicalRecordService.getFloodAlert(personList));
     }
 
