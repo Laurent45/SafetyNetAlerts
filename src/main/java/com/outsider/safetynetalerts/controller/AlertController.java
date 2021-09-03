@@ -36,9 +36,12 @@ public class AlertController {
 
     @GetMapping("/childAlert")
     public ResponseEntity<ChildAlertDTO> childAlert(@RequestParam("address") String address) {
-        List<Person> persons = personService.getPersonsBy(address);
-        ChildAlertDTO childAlertDTO = medicalRecordService.getChildAlertDTO(persons);
-        return ResponseEntity.ok(childAlertDTO);
+        try {
+            List<Person> persons = personService.getPersonsBy(address);
+            return ResponseEntity.ok(medicalRecordService.getChildAlertDTO(persons));
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/phoneAlert")
@@ -52,19 +55,23 @@ public class AlertController {
 
     @GetMapping("/fire")
     public ResponseEntity<Object> fireAlert(@RequestParam("address") String address) {
-        List<Person> personList = personService.getPersonsBy(address);
-        return ResponseEntity.ok(medicalRecordService.getFireAlert(personList));
+        try {
+            List<Person> personList = personService.getPersonsBy(address);
+            return ResponseEntity.ok(medicalRecordService.getFireAlert(personList));
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/flood/stations")
     public ResponseEntity<Object> floodAlert(@RequestParam("stations") List<Integer> stations) {
-        List<Person> personList;
         try {
-            personList = fireStationService.getPersonCoverBy(stations);
+            List<Person> personList =
+                    fireStationService.getPersonCoverBy(stations);
+            return ResponseEntity.ok(medicalRecordService.getFloodAlert(personList));
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(medicalRecordService.getFloodAlert(personList));
     }
 
     @GetMapping("/personInfo")
@@ -73,7 +80,7 @@ public class AlertController {
         try {
             return ResponseEntity.ok(personService.getPersonInfo(lastName, firstName));
         } catch (NotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -82,7 +89,7 @@ public class AlertController {
         try {
             return ResponseEntity.ok().body(personService.getCommunityEmail(city));
         } catch (NotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.notFound().build();
         }
     }
 

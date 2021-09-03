@@ -49,10 +49,16 @@ public class PersonServiceImpl implements IPersonService {
     }
 
     @Override
-    public List<Person> getPersonsBy(String address) {
+    public List<Person> getPersonsBy(String address) throws NotFoundException {
         logger.debug("getPersonBy has been called, parameter -> address = " + address);
 
-        return personRepository.getPersonsByAddress(address);
+        List<Person> persons = personRepository.getPersonsByAddress(address);
+        if (persons.isEmpty()) {
+            logger.error("No one lives in this address -> " + address);
+            throw new NotFoundException("no one lives in this address");
+        }
+
+        return persons;
     }
 
     @Override
@@ -85,8 +91,8 @@ public class PersonServiceImpl implements IPersonService {
                 .collect(Collectors.toList());
 
         if (emailList.isEmpty()) {
-            logger.error("nobody in the database living in " + city);
-            throw new NotFoundException("nobody in the database living in " + city);
+            logger.error("no one in the database living in " + city);
+            throw new NotFoundException("no one in the database living in " + city);
         }
 
         return emailList;

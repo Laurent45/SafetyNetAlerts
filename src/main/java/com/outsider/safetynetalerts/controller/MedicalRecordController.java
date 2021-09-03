@@ -20,10 +20,13 @@ public class MedicalRecordController {
     }
 
     @PostMapping("/medicalRecord")
-    public ResponseEntity<Boolean> createMedicalRecord(@RequestBody MedicalRecord medicalRecord) {
-        boolean ret = medicalRecordServiceImpl.saveMedicalRecord(medicalRecord);
-        return ret ? ResponseEntity.ok(true) :
-                ResponseEntity.internalServerError().body(false);
+    public ResponseEntity<String> createMedicalRecord(@RequestBody MedicalRecord medicalRecord) {
+        try {
+            medicalRecordServiceImpl.saveMedicalRecord(medicalRecord);
+            return ResponseEntity.ok("");
+        } catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @PutMapping("/medicalRecord")
