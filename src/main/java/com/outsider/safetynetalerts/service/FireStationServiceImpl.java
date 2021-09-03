@@ -66,7 +66,8 @@ public class FireStationServiceImpl implements IFireStationService {
             try {
                 personList.addAll(getPersonsCoverBy(s));
             } catch (NotFoundException e) {
-                logger.error(String.format("number of station -> %d has been not found", s));
+                logger.error(String.format("number of station -> %d has " +
+                        "been not found", s));
             }
         });
 
@@ -81,8 +82,8 @@ public class FireStationServiceImpl implements IFireStationService {
         List<String> phoneNumber = null;
         try {
             phoneNumber = getPersonsCoverBy(stationNumber).stream()
-                            .map(Person::getPhone)
-                            .collect(Collectors.toList());
+                    .map(Person::getPhone)
+                    .collect(Collectors.toList());
         } catch (NotFoundException e) {
             logger.error(String.format("number of station -> %d has been not " +
                     "found", stationNumber));

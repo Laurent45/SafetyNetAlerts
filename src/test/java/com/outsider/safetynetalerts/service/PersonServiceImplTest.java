@@ -77,9 +77,19 @@ public class PersonServiceImplTest {
     }
 
     @Test
-    void givenAnAddress_whenGetPersonsBy_thenCallGetPersonsByAddress() {
-        personServiceImplSUT.getPersonsBy("1, rue de Paris");
-        verify(mockPersonRepository).getPersonsByAddress("1, rue de Paris");
+    void givenAnAddress_whenGetPersonsBy_thenCallGetPersonsByAddress() throws NotFoundException {
+        String address = "1 rue de Paris";
+        when(mockPersonRepository.getPersonsByAddress(address)).thenReturn(List.of(new Person()));
+        personServiceImplSUT.getPersonsBy(address);
+        verify(mockPersonRepository).getPersonsByAddress(address);
+    }
+
+    @Test
+    void givenAddressUnknown_whenGetPersonBy_thenThrowNotFoundException() {
+        String address = "1 rue de Paris";
+        when(mockPersonRepository.getPersonsByAddress(address)).thenReturn(List.of());
+        assertThatThrownBy(() -> personServiceImplSUT.getPersonsBy(address))
+                .isInstanceOf(NotFoundException.class);
     }
 
     @Test

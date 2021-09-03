@@ -2,6 +2,8 @@ package com.outsider.safetynetalerts.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.util.List;
 import java.util.Objects;
@@ -9,6 +11,7 @@ import java.util.Objects;
 @Data
 public class MedicalRecord {
     private static int idCounter = 0;
+    @EqualsAndHashCode.Exclude
     private final int id;
 
     public MedicalRecord() {
@@ -20,19 +23,10 @@ public class MedicalRecord {
     private String birthdate;
     private List<String> medications;
     private List<String> allergies;
+
     @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Person person;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        MedicalRecord that = (MedicalRecord) o;
-        return Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(birthdate, that.birthdate) && Objects.equals(medications, that.medications) && Objects.equals(allergies, that.allergies);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(firstName, lastName, birthdate, medications, allergies);
-    }
 }

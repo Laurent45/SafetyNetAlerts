@@ -11,6 +11,7 @@ import java.util.Objects;
 public class FireStation {
 
     private static int idCounter = 0;
+    @EqualsAndHashCode.Exclude
     private final int id;
 
     public FireStation() {
@@ -19,20 +20,11 @@ public class FireStation {
 
     private String address;
     private int station;
+
     @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Person> persons = new ArrayList<>();
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FireStation that = (FireStation) o;
-        return station == that.station && Objects.equals(address, that.address);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(address, station);
-    }
 }
 

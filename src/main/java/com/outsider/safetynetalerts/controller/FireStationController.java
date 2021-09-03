@@ -19,10 +19,13 @@ public class FireStationController {
     }
 
     @PostMapping("/firestation")
-    public ResponseEntity<Boolean> createFireStation(@RequestBody FireStation fireStation) {
-        boolean ret = fireStationServiceImpl.saveFireStation(fireStation);
-        return ret ? ResponseEntity.ok(true) :
-                ResponseEntity.internalServerError().body(false);
+    public ResponseEntity<String> createFireStation(@RequestBody FireStation fireStation) {
+        try {
+            fireStationServiceImpl.saveFireStation(fireStation);
+            return ResponseEntity.ok("");
+        } catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @PutMapping("/firestation")

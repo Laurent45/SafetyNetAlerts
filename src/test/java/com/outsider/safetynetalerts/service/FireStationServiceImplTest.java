@@ -1,7 +1,9 @@
 package com.outsider.safetynetalerts.service;
 
+import com.outsider.safetynetalerts.dataTransferObject.dtos.FireStationAlertDTO;
 import com.outsider.safetynetalerts.dataTransferObject.dtos.PersonUpdateDTO;
 import com.outsider.safetynetalerts.model.FireStation;
+import com.outsider.safetynetalerts.model.MedicalRecord;
 import com.outsider.safetynetalerts.model.Person;
 import com.outsider.safetynetalerts.repository.FireStationRepository;
 import javassist.NotFoundException;
@@ -26,6 +28,8 @@ class FireStationServiceImplTest {
     private FireStationServiceImpl fireStationServiceUT;
     @Mock
     private FireStationRepository mockFireStationRepository;
+    @Mock
+    private MedicalRecordServiceImpl mockMedicalRecordService;
 
     @BeforeEach
     void setUp() {
@@ -92,7 +96,7 @@ class FireStationServiceImplTest {
     }
 
     @Test
-    void givenStationNumberList_whenGetPersonCoverBy_thenReturnAPersonList() {
+    void givenStationNumberList_whenGetPersonCoverBy_thenReturnAPersonList() throws NotFoundException {
         Person p1 = new Person();
         Person p2 = new Person();
         FireStation fR1 = new FireStation();
@@ -100,12 +104,51 @@ class FireStationServiceImplTest {
         fR1.getPersons().add(p1);
         fR2.getPersons().add(p2);
         when(mockFireStationRepository.getFireStationsWith(2)).thenReturn(List.of(fR1));
-        when(mockFireStationRepository.getFireStationsWith(4)).thenReturn(List.of(fR1));
+        when(mockFireStationRepository.getFireStationsWith(4)).thenReturn(List.of(fR2));
 
 
         List<Person> personList =
                 fireStationServiceUT.getPersonCoverBy(List.of(2, 4));
 
         assertThat(personList).containsOnly(p1, p2);
+    }
+
+    @Test
+    void givenStationNumber_whenGetPhonePersonsCoverBy_thenReturnList() throws NotFoundException {
+        Person p1 = new Person();
+        p1.setPhone("123-456");
+        Person p2 = new Person();
+        p2.setPhone("965-456");
+        FireStation fireStation = new FireStation();
+        fireStation.setPersons(List.of(p1, p2));
+        when(mockFireStationRepository.getFireStationsWith(2)).thenReturn(List.of(fireStation));
+
+        List<String> phones = fireStationServiceUT.getPhonePersonsCoverBy(2);
+        assertThat(phones).containsOnly("123-456", "965-456");
+    }
+
+    @Test
+    void givenStationNumber_whenGetFireStationAlert_thenReturnFireStationAlertDTO() throws NotFoundException {
+        Person p1 = new Person();
+        p1.setLastName("Frazier");
+        MedicalRecord mR1 = new MedicalRecord();
+        mR1.setBirthdate("15/05/1987");
+        p1.setMedicalRecord(mR1);
+        Person p2 = new Person();
+        p2.setLastName("Jones");
+        MedicalRecord mR2 = new MedicalRecord();
+        mR2.setBirthdate("15/05/2010");
+        p2.setMedicalRecord(mR2);
+        FireStation fr1 = new FireStation();
+        fr1.setPersons(List.of(p1, p2));
+        when(mockFireStationRepository.getFireStationsWith(3)).thenReturn(List.of(fr1));
+        when(mockMedicalRecordService.isAnAdult(mR1)).thenReturn(true);
+        when(mockMedicalRecordService.isAnAdult(mR2)).thenReturn(false);
+
+        FireStationAlertDTO result = fireStationServiceUT.getFireStationAlert(3);
+
+        assertThat(result.getNChildren()).isEqualTo(1);
+        assertThat(result.getNAdults()).isEqualTo(1);
+        assertThat(result.getPersonDTOList().size()).isEqualTo(2);
     }
 }

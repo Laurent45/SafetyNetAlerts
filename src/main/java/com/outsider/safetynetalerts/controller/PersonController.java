@@ -5,7 +5,6 @@ import com.outsider.safetynetalerts.model.Person;
 import com.outsider.safetynetalerts.service.IPersonService;
 import javassist.NotFoundException;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,10 +20,13 @@ public class PersonController {
     }
 
     @PostMapping("/person")
-    public ResponseEntity<Boolean> createPerson(@RequestBody Person person) {
-        boolean ret = personServiceImpl.savePerson(person);
-        return ret ? ResponseEntity.ok(true) :
-                ResponseEntity.internalServerError().body(false);
+    public ResponseEntity<String> createPerson(@RequestBody Person person) {
+        try {
+            personServiceImpl.savePerson(person);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @PutMapping("/person")
@@ -39,11 +41,11 @@ public class PersonController {
     }
 
     @DeleteMapping("/person")
-    public ResponseEntity<String> deletePerson(@RequestParam String firstName,
-                             @RequestParam String lastName) {
+    public ResponseEntity<Object> deletePerson(@RequestParam String firstName,
+                                               @RequestParam String lastName) {
         try {
             personServiceImpl.deletePerson(lastName, firstName);
-            return ResponseEntity.ok("");
+            return ResponseEntity.ok().build();
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         }

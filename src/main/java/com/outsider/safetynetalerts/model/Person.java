@@ -11,6 +11,7 @@ import java.util.Objects;
 @Data
 public class Person {
     static int idCounter = 0;
+    @EqualsAndHashCode.Exclude
     private final int id;
 
     public Person() {
@@ -24,24 +25,16 @@ public class Person {
     private String zip;
     private String phone;
     private String email;
+
     @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private MedicalRecord medicalRecord;
+
     @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<FireStation> fireStations = new ArrayList<>();
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Person person = (Person) o;
-        return Objects.equals(firstName, person.firstName) && Objects.equals(lastName, person.lastName) && Objects.equals(address, person.address) && Objects.equals(city, person.city) && Objects.equals(zip, person.zip) && Objects.equals(phone, person.phone) && Objects.equals(email, person.email);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(firstName, lastName, address, city, zip, phone, email);
-    }
-
 
 }
 

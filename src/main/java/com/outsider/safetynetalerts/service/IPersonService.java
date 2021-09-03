@@ -27,8 +27,9 @@ public interface IPersonService {
      * Get all persons if their addresses is equal
      * @param address - a string that represents an address
      * @return a list of persons
+     * @throws NotFoundException - No one lives in this address
      */
-    List<Person> getPersonsBy(String address);
+    List<Person> getPersonsBy(String address) throws NotFoundException;
 
     /**
      * Search the person by his first name and his last name and return a
