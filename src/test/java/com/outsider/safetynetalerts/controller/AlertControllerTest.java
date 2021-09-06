@@ -1,5 +1,9 @@
 package com.outsider.safetynetalerts.controller;
 
+import com.outsider.safetynetalerts.dataTransferObject.dtos.ChildAlertDTO;
+import com.outsider.safetynetalerts.dataTransferObject.dtos.PersonChildDTO;
+import com.outsider.safetynetalerts.dataTransferObject.dtos.PersonOtherDTO;
+import com.outsider.safetynetalerts.model.Person;
 import com.outsider.safetynetalerts.service.FireStationServiceImpl;
 import com.outsider.safetynetalerts.service.MedicalRecordServiceImpl;
 import com.outsider.safetynetalerts.service.PersonServiceImpl;
@@ -30,7 +34,7 @@ class AlertControllerTest {
     @Test
     void givenStationNumber_whenFireStationAlert_thenStatusOk() throws Exception {
         mockMvc.perform(get("/firestation")
-                        .param("station", "3"))
+                        .param("stationNumber", "3"))
                 .andExpect(status().isOk());
     }
 
@@ -38,12 +42,18 @@ class AlertControllerTest {
     void givenABadStationNumber_whenFireStationAlert_thenStatusNotFound() throws Exception {
         when(fireStationService.getFireStationAlert(3)).thenThrow(NotFoundException.class);
         mockMvc.perform(get("/firestation")
-                        .param("station", "3"))
+                        .param("stationNumber", "3"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void givenAddress_whenChildAlert_thenStatusOk() throws Exception {
+        List<Person> persons = List.of(new Person());
+        ChildAlertDTO childAlertDTO = new ChildAlertDTO();
+        childAlertDTO.setChildrenList(List.of(new PersonChildDTO()));
+        childAlertDTO.setOtherPersonsList(List.of(new PersonOtherDTO()));
+        when(personService.getPersonsBy("1 rue de Paris")).thenReturn(persons);
+        when(medicalRecordService.getChildAlertDTO(persons)).thenReturn(childAlertDTO);
         mockMvc.perform(get("/childAlert")
                         .param("address", "1 rue de Paris"))
                 .andExpect(status().isOk());

@@ -9,7 +9,6 @@ import com.outsider.safetynetalerts.service.IMedicalRecordService;
 import com.outsider.safetynetalerts.service.IPersonService;
 import javassist.NotFoundException;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,68 +25,85 @@ public class AlertController {
 
     @GetMapping("/firestation")
     public ResponseEntity<FireStationAlertDTO> fireStationAlert(@RequestParam(
-            "station") int stationNumber) {
+            "stationNumber") final int stationNumber) {
         try {
-            return ResponseEntity.ok(fireStationService.getFireStationAlert(stationNumber));
+            return ResponseEntity
+                    .ok(fireStationService.getFireStationAlert(stationNumber));
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @GetMapping("/childAlert")
-    public ResponseEntity<ChildAlertDTO> childAlert(@RequestParam("address") String address) {
+    public ResponseEntity<ChildAlertDTO> childAlert(
+            @RequestParam("address") final String address) {
         try {
             List<Person> persons = personService.getPersonsBy(address);
-            return ResponseEntity.ok(medicalRecordService.getChildAlertDTO(persons));
+            ChildAlertDTO childAlertDTO =
+                    medicalRecordService.getChildAlertDTO(persons);
+            if (childAlertDTO.getChildrenList().isEmpty()) {
+                return ResponseEntity.ok().build();
+            }
+            return ResponseEntity.ok(childAlertDTO);
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @GetMapping("/phoneAlert")
-    public ResponseEntity<List<String>> phoneAlert(@RequestParam("firestation") int stationNumber) {
+    public ResponseEntity<List<String>> phoneAlert(
+            @RequestParam("firestation") final int stationNumber) {
         try {
-            return ResponseEntity.ok(fireStationService.getPhonePersonsCoverBy(stationNumber));
+            return ResponseEntity
+                    .ok(fireStationService.getPhonePersonsCoverBy(stationNumber));
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @GetMapping("/fire")
-    public ResponseEntity<Object> fireAlert(@RequestParam("address") String address) {
+    public ResponseEntity<Object> fireAlert(
+            @RequestParam("address") final String address) {
         try {
             List<Person> personList = personService.getPersonsBy(address);
-            return ResponseEntity.ok(medicalRecordService.getFireAlert(personList));
+            return ResponseEntity
+                    .ok(medicalRecordService.getFireAlert(personList));
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @GetMapping("/flood/stations")
-    public ResponseEntity<Object> floodAlert(@RequestParam("stations") List<Integer> stations) {
+    public ResponseEntity<Object> floodAlert(
+            @RequestParam("stations") final List<Integer> stations) {
         try {
             List<Person> personList =
                     fireStationService.getPersonCoverBy(stations);
-            return ResponseEntity.ok(medicalRecordService.getFloodAlert(personList));
+            return ResponseEntity
+                    .ok(medicalRecordService.getFloodAlert(personList));
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @GetMapping("/personInfo")
-    public ResponseEntity<List<PersonInfoDTO>> personInfo(@RequestParam("lastName") String lastName
-            , @RequestParam("firstName") String firstName) {
+    public ResponseEntity<List<PersonInfoDTO>> personInfo(
+            @RequestParam("lastName") final String lastName,
+            @RequestParam("firstName") final String firstName) {
         try {
-            return ResponseEntity.ok(personService.getPersonInfo(lastName, firstName));
+            return ResponseEntity
+                    .ok(personService.getPersonInfo(lastName, firstName));
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @GetMapping("/communityEmail")
-    public ResponseEntity<List<String>> communityEmail(@RequestParam("city") String city) {
+    public ResponseEntity<List<String>> communityEmail(
+            @RequestParam("city") final String city) {
         try {
-            return ResponseEntity.ok().body(personService.getCommunityEmail(city));
+            return ResponseEntity
+                    .ok(personService.getCommunityEmail(city));
         } catch (NotFoundException e) {
             return ResponseEntity.notFound().build();
         }

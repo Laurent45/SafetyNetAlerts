@@ -153,13 +153,13 @@ public class MedicalRecordServiceImpl implements IMedicalRecordService{
             throw new NotFoundException("medical record id not found");
         }
 
-        if (!(mR.getBirthdate().isEmpty())) {
+        if (mR.getBirthdate() != null) {
             medicalRecord.get().setBirthdate(mR.getBirthdate());
         }
-        if (!(mR.getMedications().isEmpty())) {
+        if (mR.getMedications() != null) {
             medicalRecord.get().setMedications(mR.getMedications());
         }
-        if (!(mR.getAllergies().isEmpty())) {
+        if (mR.getAllergies() != null) {
             medicalRecord.get().setAllergies(mR.getAllergies());
         }
 

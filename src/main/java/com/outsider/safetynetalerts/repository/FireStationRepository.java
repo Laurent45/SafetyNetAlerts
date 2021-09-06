@@ -2,7 +2,6 @@ package com.outsider.safetynetalerts.repository;
 
 import com.outsider.safetynetalerts.dataBase.DataBase;
 import com.outsider.safetynetalerts.model.FireStation;
-import com.outsider.safetynetalerts.model.Person;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 

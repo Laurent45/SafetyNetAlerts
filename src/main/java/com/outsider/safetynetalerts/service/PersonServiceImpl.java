@@ -88,6 +88,7 @@ public class PersonServiceImpl implements IPersonService {
 
         List<String> emailList = personRepository.getPersonsByCity(city).stream()
                 .map(Person::getEmail)
+                .distinct()
                 .collect(Collectors.toList());
 
         if (emailList.isEmpty()) {
