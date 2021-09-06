@@ -17,11 +17,8 @@
         <java.version>11</java.version>
         <org.mapstruct.version>1.5.0.Beta1</org.mapstruct.version>
         <org.lombok.version>1.18.20</org.lombok.version>
-        <sonar.organization>laurent45</sonar.organization>
-        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <sonar.login>1db6ef27222bd6913ab02681e6c11af73b264828</sonar.login>
-        <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -30,6 +27,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
         <dependency>

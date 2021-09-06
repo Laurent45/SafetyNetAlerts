@@ -57,43 +57,43 @@ public class FireStationServiceImpl implements IFireStationService {
     }
 
     @Override
-    public List<Person> getPersonCoverBy(List<Integer> stationNumbers) {
+    public List<Person> getPersonCoverBy(List<Integer> stationNumbers) throws NotFoundException {
         logger.debug("getPersonCoverBy has been called, parameter -> " +
                 "stationNumber list = " + stationNumbers);
 
         List<Person> personList = new ArrayList<>();
-        stationNumbers.forEach(s -> {
+        for (Integer s : stationNumbers) {
             try {
                 personList.addAll(getPersonsCoverBy(s));
             } catch (NotFoundException e) {
-                logger.error(String.format("number of station -> %d has " +
-                        "been not found", s));
+                logger.error(e.getMessage());
+                throw new NotFoundException(e.getMessage());
             }
-        });
+        }
 
         return personList;
     }
 
     @Override
-    public List<String> getPhonePersonsCoverBy(int stationNumber) {
+    public List<String> getPhonePersonsCoverBy(int stationNumber) throws NotFoundException {
         logger.debug("getPhonePersonCoverBy has been called, parameter -> " +
                 "stationNumber = " + stationNumber);
 
-        List<String> phoneNumber = null;
         try {
-            phoneNumber = getPersonsCoverBy(stationNumber).stream()
+            return getPersonsCoverBy(stationNumber).stream()
                     .map(Person::getPhone)
+                    .distinct()
                     .collect(Collectors.toList());
         } catch (NotFoundException e) {
             logger.error(String.format("number of station -> %d has been not " +
                     "found", stationNumber));
+            throw new NotFoundException(String.format("number of station -> %d has been not " +
+                    "found", stationNumber));
         }
-
-        return phoneNumber;
     }
 
     @Override
-    public FireStationAlertDTO getFireStationAlert(int stationNumber) {
+    public FireStationAlertDTO getFireStationAlert(int stationNumber) throws NotFoundException {
         logger.debug("getFireStationAlert has been called, parameter -> " +
                 "stationNumber = " + stationNumber);
         ChildAlertMapper mapper = new ChildAlertMapperImpl();
@@ -112,6 +112,8 @@ public class FireStationServiceImpl implements IFireStationService {
             });
         } catch (NotFoundException e) {
             logger.error(String.format("number of station -> %d has been not " +
+                    "found", stationNumber));
+            throw new NotFoundException(String.format("number of station -> %d has been not " +
                     "found", stationNumber));
         }
 
