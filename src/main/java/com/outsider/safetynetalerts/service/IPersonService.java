@@ -24,7 +24,7 @@ public interface IPersonService {
     boolean savePerson(Person person) throws RuntimeException;
 
     /**
-     * Get all persons if their addresses is equal
+     * Get all persons if their addresses is equal.
      * @param address - a string that represents an address
      * @return a list of persons
      * @throws NotFoundException - No one lives in this address
@@ -39,7 +39,8 @@ public interface IPersonService {
      * @param firstName - a string that represent a first name
      * @return a list of PersonInfoDTO
      */
-    List<PersonInfoDTO> getPersonInfo(String lastName, String firstName) throws NotFoundException;
+    List<PersonInfoDTO> getPersonInfo(String lastName, String firstName)
+            throws NotFoundException;
 
     /**
      * Get an email list of people who live in the city mentioned.
@@ -55,7 +56,8 @@ public interface IPersonService {
      * @throws NotFoundException - person not found
      * @return the new person
      */
-    Person updatePerson(int id, PersonUpdateDTO person) throws NotFoundException;
+    Person updatePerson(int id, PersonUpdateDTO person)
+            throws NotFoundException;
 
     /**
      * Delete a person.
@@ -63,5 +65,6 @@ public interface IPersonService {
      * @param firstName - first name of this person
      * @throws NotFoundException - person not found
      */
-    void deletePerson(String lastName, String firstName) throws NotFoundException;
+    void deletePerson(String lastName, String firstName)
+            throws NotFoundException;
 }

@@ -19,32 +19,33 @@ public class FireStationRepository {
         return this.dataBase.getFireStationList();
     }
 
-    public boolean saveFireStation(FireStation fireStation) {
+    public boolean saveFireStation(final FireStation fireStation) {
         return dataBase.getFireStationList().add(fireStation);
     }
 
-    public boolean deleteFireStation(FireStation fireStation) {
+    public boolean deleteFireStation(final FireStation fireStation) {
         return dataBase.getFireStationList().remove(fireStation);
     }
 
-    public List<FireStation> getFireStationsWith(int stationNumber) {
+    public List<FireStation> getFireStationsWith(final int stationNumber) {
         return this.dataBase.getFireStationList().stream()
-                .filter(fireStation -> fireStation.getStation() == stationNumber)
+                .filter(fireStation ->
+                        fireStation.getStation() == stationNumber)
                 .collect(Collectors.toList());
     }
 
-    public Optional<FireStation> getFireStationByAddress(String address) {
+    public Optional<FireStation> getFireStationByAddress(final String address) {
         return this.dataBase.getFireStationList().stream()
                 .filter(fireStation -> fireStation.getAddress().equals(address))
                 .findFirst();
     }
 
-    public Optional<FireStation> getFireStationByAddressAndStationNumber(String address, int stationNumber) {
+    public Optional<FireStation> getFireStationByAddressAndStationNumber(
+            final String address, final int stationNumber) {
         return this.dataBase.getFireStationList().stream()
                 .filter(fireStation -> fireStation.getAddress().equals(address)
                         && fireStation.getStation() == stationNumber)
                 .findFirst();
     }
-
 
 }

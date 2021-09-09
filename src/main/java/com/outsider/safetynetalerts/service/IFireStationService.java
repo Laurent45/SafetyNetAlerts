@@ -28,16 +28,18 @@ public interface IFireStationService {
      * @return a list of Persons.
      * @throws NotFoundException - number of stationNumber not found
      */
-    List<Person> getPersonCoverBy(List<Integer> stationNumbers) throws NotFoundException;
+    List<Person> getPersonCoverBy(List<Integer> stationNumbers)
+            throws NotFoundException;
 
     /**
      * Get a person list who are covered by a station number and get a count
-     * of number of adults and children
+     * of number of adults and children.
      * @param stationNumber - an integer that represent a station number
      * @return an object of FireStationAlertDTO
      * @throws NotFoundException - number of stationNumber not found
      */
-    FireStationAlertDTO getFireStationAlert(int stationNumber) throws NotFoundException;
+    FireStationAlertDTO getFireStationAlert(int stationNumber)
+            throws NotFoundException;
 
     /**
      * Get a list of phone number of persons who are cover by a station.
@@ -45,7 +47,8 @@ public interface IFireStationService {
      * @return a list of phone number
      * @throws NotFoundException - number of stationNumber not found
      */
-    List<String> getPhonePersonsCoverBy(int stationNumber) throws NotFoundException;
+    List<String> getPhonePersonsCoverBy(int stationNumber)
+            throws NotFoundException;
 
     /**
      * Update the number of station number of a fireStation object.
@@ -53,7 +56,8 @@ public interface IFireStationService {
      * @return a fireStation Object updated
      * @throws NotFoundException - fireStation object not found
      */
-    FireStation updateFireStation(FireStation fireStation) throws NotFoundException;
+    FireStation updateFireStation(FireStation fireStation)
+            throws NotFoundException;
 
     /**
      * Save a fireStation object.
@@ -61,7 +65,8 @@ public interface IFireStationService {
      * @return a boolean if it's saved.
      * @throws RuntimeException - error while saving
      */
-    boolean saveFireStation(FireStation fireStation) throws RuntimeException;
+    boolean saveFireStation(FireStation fireStation)
+            throws RuntimeException;
 
     /**
      * Delete a fireStation object.
@@ -69,5 +74,6 @@ public interface IFireStationService {
      * @param stationNumber - number of station number object
      * @throws NotFoundException - fireStation object not found
      */
-    void deleteFireStation(String address, int stationNumber) throws NotFoundException;
+    void deleteFireStation(String address, int stationNumber)
+            throws NotFoundException;
 }

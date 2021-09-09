@@ -19,41 +19,42 @@ public class PersonRepository {
         return dataBase.getPersonList();
     }
 
-    public Optional<Person> getPersonById(int id) {
+    public Optional<Person> getPersonById(final int id) {
         return dataBase.getPersonList().stream()
                 .filter(person -> person.getId() == id)
                 .findFirst();
     }
 
-    public boolean savePerson(Person person) {
+    public boolean savePerson(final Person person) {
         return dataBase.getPersonList().add(person);
     }
 
-    public boolean deletePerson(Person person) {
+    public boolean deletePerson(final Person person) {
         return dataBase.getPersonList().remove(person);
     }
 
-    public List<Person> getPersonsByAddress(String address) {
+    public List<Person> getPersonsByAddress(final String address) {
         return this.dataBase.getPersonList().stream()
                 .filter(person -> person.getAddress().equals(address))
                 .collect(Collectors.toList());
     }
 
-    public List<Person> getPersonsByLastName(String lastName) {
+    public List<Person> getPersonsByLastName(final String lastName) {
         return this.dataBase.getPersonList().stream()
                 .filter(person -> person.getLastName().equals(lastName))
                 .collect(Collectors.toList());
     }
 
-    public Optional<Person> getPersonByLastNameAndFirstName(String lastName,
-                                                            String firstName) {
+    public Optional<Person> getPersonByLastNameAndFirstName(
+            final String lastName,
+            final String firstName) {
         return this.dataBase.getPersonList().stream()
                 .filter(person -> person.getLastName().equals(lastName)
                         && person.getFirstName().equals(firstName))
                 .findFirst();
     }
 
-    public List<Person> getPersonsByCity(String city) {
+    public List<Person> getPersonsByCity(final String city) {
         return this.dataBase.getPersonList().stream()
                 .filter(person -> person.getCity().equals(city))
                 .collect(Collectors.toList());

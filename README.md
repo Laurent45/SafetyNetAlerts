@@ -1,2 +1,2 @@
 # SafetyNetAlerts
-Restful api provides informations to emergency service
+Restful api provides information to emergency service
