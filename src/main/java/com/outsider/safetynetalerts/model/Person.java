@@ -1,16 +1,17 @@
 package com.outsider.safetynetalerts.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 
 @Data
 public class Person {
-    static int idCounter = 0;
+    private static int idCounter = 0;
     @EqualsAndHashCode.Exclude
     private final int id;
 

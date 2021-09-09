@@ -18,25 +18,26 @@ public class MedicalRecordRepository {
         return dataBase.getMedicalRecordList();
     }
 
-    public Optional<MedicalRecord> getMedicalRecordById(int id) {
+    public Optional<MedicalRecord> getMedicalRecordById(final int id) {
         return dataBase.getMedicalRecordList().stream()
                 .filter(medicalRecord -> medicalRecord.getId() == id)
                 .findFirst();
     }
 
-    public Optional<MedicalRecord> getPersonByLastNameAndFirstName(String lastName,
-                                                                   String fistName) {
+    public Optional<MedicalRecord> getPersonByLastNameAndFirstName(
+            final String lastName, final String fistName) {
         return dataBase.getMedicalRecordList().stream()
-                .filter(medicalRecord -> (medicalRecord.getFirstName().equals(fistName))
+                .filter(medicalRecord ->
+                        (medicalRecord.getFirstName().equals(fistName))
                         && medicalRecord.getLastName().equals(lastName))
                 .findFirst();
     }
 
-    public boolean saveMedicalRecord(MedicalRecord medicalRecord) {
+    public boolean saveMedicalRecord(final MedicalRecord medicalRecord) {
         return dataBase.getMedicalRecordList().add(medicalRecord);
     }
 
-    public boolean deleteMedicalRecord(MedicalRecord medicalRecord) {
+    public boolean deleteMedicalRecord(final MedicalRecord medicalRecord) {
         return dataBase.getMedicalRecordList().remove(medicalRecord);
     }
 }

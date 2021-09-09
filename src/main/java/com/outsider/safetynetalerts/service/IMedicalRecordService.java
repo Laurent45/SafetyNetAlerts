@@ -13,20 +13,20 @@ import java.util.Map;
 
 public interface IMedicalRecordService {
     /**
-     * Get all medical records to use MedicalRecordRepository
+     * Get all medical records to use MedicalRecordRepository.
      * @return an iterable object of medical records
      */
     Iterable<MedicalRecord> getMedicalRecords();
 
     /**
-     * Check if it is a medical record of an adult or not
+     * Check if it is a medical record of an adult or not.
      * @param medicalRecord - an instance of MedicalRecord
      * @return a boolean according to the answer.
      */
     boolean isAnAdult(MedicalRecord medicalRecord);
 
     /**
-     * Calculate the age of medical record's owner
+     * Calculate the age of medical record's owner.
      * @param medicalRecord - an instance of MedicalRecord
      * @return an integer that represents the age
      */
@@ -74,7 +74,8 @@ public interface IMedicalRecordService {
      * @return a boolean if it's saved
      * @throws RuntimeException - error while saving
      */
-    boolean saveMedicalRecord(MedicalRecord medicalRecord) throws RuntimeException;
+    boolean saveMedicalRecord(MedicalRecord medicalRecord)
+            throws RuntimeException;
 
     /**
      * Update some medical record fields.
@@ -83,13 +84,15 @@ public interface IMedicalRecordService {
      * @return the new medical record
      * @throws NotFoundException - id not found
      */
-    MedicalRecord updateMedicalRecord(int id, MedicalRecordUpdateDTO mR) throws NotFoundException;
+    MedicalRecord updateMedicalRecord(int id, MedicalRecordUpdateDTO mR)
+            throws NotFoundException;
 
     /**
-     * Delete a medical record
+     * Delete a medical record.
      * @param lastName - last name of this medical record
      * @param firstName - first name of this medical record
      * @throws NotFoundException - medical record not found
      */
-    void deleteMedicalRecord(String lastName, String firstName) throws NotFoundException;
+    void deleteMedicalRecord(String lastName, String firstName)
+            throws NotFoundException;
 }

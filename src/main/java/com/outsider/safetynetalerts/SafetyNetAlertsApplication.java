@@ -16,8 +16,7 @@ public class SafetyNetAlertsApplication {
     }
 
     @Bean
-    public HttpTraceRepository httpTraceRepository()
-    {
+    public HttpTraceRepository httpTraceRepository() {
         return new InMemoryHttpTraceRepository();
     }
 

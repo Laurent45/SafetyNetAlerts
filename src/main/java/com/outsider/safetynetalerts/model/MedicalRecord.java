@@ -6,7 +6,6 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.util.List;
-import java.util.Objects;
 
 @Data
 public class MedicalRecord {

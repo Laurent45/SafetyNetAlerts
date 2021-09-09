@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class FireStationServiceImpl implements IFireStationService {
 
-    private static final Logger logger =
+    private static final Logger LOGGER =
             LogManager.getLogger(FireStationServiceImpl.class);
 
     private final FireStationRepository fireStationRepository;
@@ -31,14 +31,15 @@ public class FireStationServiceImpl implements IFireStationService {
 
     @Override
     public Iterable<FireStation> getFireStations() {
-        logger.debug("getFireStation has been called");
+        LOGGER.debug("getFireStation has been called");
         return fireStationRepository.getFireStations();
     }
 
     @Override
-    public List<Person> getPersonsCoverBy(int stationNumber) throws NotFoundException {
-        logger.debug("getPersonCoverBy has been called, parameter -> " +
-                "stationNumber = " + stationNumber);
+    public List<Person> getPersonsCoverBy(final int stationNumber)
+            throws NotFoundException {
+        LOGGER.debug("getPersonCoverBy has been called, parameter -> "
+                + "stationNumber = " + stationNumber);
 
         List<Person> persons = this.fireStationRepository
                 .getFireStationsWith(stationNumber).stream()
@@ -47,26 +48,27 @@ public class FireStationServiceImpl implements IFireStationService {
                 .collect(Collectors.toList());
 
         if (persons.isEmpty()) {
-            logger.error(String.format("number of station -> " +
-                    "%d has been not found", stationNumber));
-            throw new NotFoundException(String.format("number of station -> " +
-                    "%d has been not found", stationNumber));
+            LOGGER.error(String.format("number of station -> "
+                    + "%d has been not found", stationNumber));
+            throw new NotFoundException(String.format("number of station -> "
+                    + "%d has been not found", stationNumber));
         }
 
         return persons;
     }
 
     @Override
-    public List<Person> getPersonCoverBy(List<Integer> stationNumbers) throws NotFoundException {
-        logger.debug("getPersonCoverBy has been called, parameter -> " +
-                "stationNumber list = " + stationNumbers);
+    public List<Person> getPersonCoverBy(final List<Integer> stationNumbers)
+            throws NotFoundException {
+        LOGGER.debug("getPersonCoverBy has been called, parameter -> "
+                + "stationNumber list = " + stationNumbers);
 
         List<Person> personList = new ArrayList<>();
         for (Integer s : stationNumbers) {
             try {
                 personList.addAll(getPersonsCoverBy(s));
             } catch (NotFoundException e) {
-                logger.error(e.getMessage());
+                LOGGER.error(e.getMessage());
                 throw new NotFoundException(e.getMessage());
             }
         }
@@ -75,9 +77,10 @@ public class FireStationServiceImpl implements IFireStationService {
     }
 
     @Override
-    public List<String> getPhonePersonsCoverBy(int stationNumber) throws NotFoundException {
-        logger.debug("getPhonePersonCoverBy has been called, parameter -> " +
-                "stationNumber = " + stationNumber);
+    public List<String> getPhonePersonsCoverBy(final int stationNumber)
+            throws NotFoundException {
+        LOGGER.debug("getPhonePersonCoverBy has been called, parameter -> "
+                + "stationNumber = " + stationNumber);
 
         try {
             return getPersonsCoverBy(stationNumber).stream()
@@ -85,17 +88,18 @@ public class FireStationServiceImpl implements IFireStationService {
                     .distinct()
                     .collect(Collectors.toList());
         } catch (NotFoundException e) {
-            logger.error(String.format("number of station -> %d has been not " +
-                    "found", stationNumber));
-            throw new NotFoundException(String.format("number of station -> %d has been not " +
-                    "found", stationNumber));
+            LOGGER.error(String.format("number of station -> %d has been not "
+                    + "found", stationNumber));
+            throw new NotFoundException(String.format("number of station -> "
+                    + "%d has been not found", stationNumber));
         }
     }
 
     @Override
-    public FireStationAlertDTO getFireStationAlert(int stationNumber) throws NotFoundException {
-        logger.debug("getFireStationAlert has been called, parameter -> " +
-                "stationNumber = " + stationNumber);
+    public FireStationAlertDTO getFireStationAlert(final int stationNumber)
+            throws NotFoundException {
+        LOGGER.debug("getFireStationAlert has been called, parameter -> "
+                + "stationNumber = " + stationNumber);
         ChildAlertMapper mapper = new ChildAlertMapperImpl();
         List<PersonDTO> personDTOList = new ArrayList<>();
         AtomicInteger nAdults = new AtomicInteger();
@@ -111,10 +115,10 @@ public class FireStationServiceImpl implements IFireStationService {
                 }
             });
         } catch (NotFoundException e) {
-            logger.error(String.format("number of station -> %d has been not " +
-                    "found", stationNumber));
-            throw new NotFoundException(String.format("number of station -> %d has been not " +
-                    "found", stationNumber));
+            LOGGER.error(String.format("number of station -> %d has been not "
+                    + "found", stationNumber));
+            throw new NotFoundException(String.format("number of station -> "
+                    + "%d has been not found", stationNumber));
         }
 
         return new FireStationAlertDTO(personDTOList, nAdults.get(),
@@ -123,16 +127,18 @@ public class FireStationServiceImpl implements IFireStationService {
 
 
     @Override
-    public FireStation updateFireStation(FireStation fireStation) throws NotFoundException {
-        logger.debug("updateFireStation has been called, parameter " +
-                "fireStation = " + fireStation);
+    public FireStation updateFireStation(final FireStation fireStation)
+            throws NotFoundException {
+        LOGGER.debug("updateFireStation has been called, parameter "
+                + "fireStation = " + fireStation);
 
         Optional<FireStation> fR =
-                fireStationRepository.getFireStationByAddress(fireStation.getAddress());
+                fireStationRepository
+                        .getFireStationByAddress(fireStation.getAddress());
         if (fR.isEmpty()) {
-            logger.error("fireStation object has been not found");
-            throw new NotFoundException("fireStation object has been not " +
-                    "found");
+            LOGGER.error("fireStation object has been not found");
+            throw new NotFoundException("fireStation object has been not "
+                    + "found");
         }
 
         if (fireStation.getStation() != 0) {
@@ -143,28 +149,33 @@ public class FireStationServiceImpl implements IFireStationService {
     }
 
     @Override
-    public boolean saveFireStation(FireStation fireStation) throws RuntimeException {
-        logger.debug("saveFireStation has been called, parameter -> " +
-                "fireStation = " + fireStation);
+    public boolean saveFireStation(final FireStation fireStation)
+            throws RuntimeException {
+        LOGGER.debug("saveFireStation has been called, parameter -> "
+                + "fireStation = " + fireStation);
 
         if (!(fireStationRepository.saveFireStation(fireStation))) {
-            logger.error("error while saving object -> " + fireStation);
+            LOGGER.error("error while saving object -> " + fireStation);
             throw new RuntimeException("error while saving");
         }
         return true;
     }
 
     @Override
-    public void deleteFireStation(String address, int stationNumber) throws NotFoundException {
-        logger.debug(String.format("deleteFireStation has been called, parameter " +
-                "-> address = %s, stationNumber = %d", address, stationNumber));
+    public void deleteFireStation(final String address, final int stationNumber)
+            throws NotFoundException {
+        LOGGER.debug(String.format("deleteFireStation has been called, "
+                        + "parameter -> address = %s, stationNumber = %d",
+                address, stationNumber));
 
         Optional<FireStation> fireStation =
-                fireStationRepository.getFireStationByAddressAndStationNumber(address, stationNumber);
+                fireStationRepository
+                        .getFireStationByAddressAndStationNumber(address,
+                                stationNumber);
         if (fireStation.isEmpty()) {
-            logger.error("fireStation object has been not found");
-            throw new NotFoundException("fireStation object has benn not " +
-                    "found");
+            LOGGER.error("fireStation object has been not found");
+            throw new NotFoundException("fireStation object has benn not "
+                    + "found");
         }
 
         fireStationRepository.deleteFireStation(fireStation.get());

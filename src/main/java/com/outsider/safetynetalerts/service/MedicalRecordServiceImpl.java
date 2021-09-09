@@ -1,6 +1,10 @@
 package com.outsider.safetynetalerts.service;
 
-import com.outsider.safetynetalerts.dataTransferObject.dtos.*;
+import com.outsider.safetynetalerts.dataTransferObject.dtos.ChildAlertDTO;
+import com.outsider.safetynetalerts.dataTransferObject.dtos.FireAlertDTO;
+import com.outsider.safetynetalerts.dataTransferObject.dtos.MedicalRecordUpdateDTO;
+import com.outsider.safetynetalerts.dataTransferObject.dtos.PersonChildDTO;
+import com.outsider.safetynetalerts.dataTransferObject.dtos.PersonFireDTO;
 import com.outsider.safetynetalerts.dataTransferObject.mapper.ChildAlertMapper;
 import com.outsider.safetynetalerts.dataTransferObject.mapper.ChildAlertMapperImpl;
 import com.outsider.safetynetalerts.model.FireStation;
@@ -22,30 +26,32 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
-public class MedicalRecordServiceImpl implements IMedicalRecordService{
-    private static final Logger logger =
+public class MedicalRecordServiceImpl implements IMedicalRecordService {
+    private static final Logger LOGGER =
             LogManager.getLogger(MedicalRecordServiceImpl.class);
+    private final int minAgeAdult = 18;
 
     private final MedicalRecordRepository medicalRecordRepository;
 
     @Override
     public Iterable<MedicalRecord> getMedicalRecords() {
-        logger.debug("getMedicalRecord has been called");
+        LOGGER.debug("getMedicalRecord has been called");
 
         return medicalRecordRepository.getAllMedicalRecords();
     }
 
     @Override
-    public boolean isAnAdult(MedicalRecord medicalRecord) {
-        logger.debug("isAdult has been called, parameter -> medicalRecord = " + medicalRecord);
+    public boolean isAnAdult(final MedicalRecord medicalRecord) {
+        LOGGER.debug("isAdult has been called, parameter -> "
+                + "medicalRecord = " + medicalRecord);
 
-        return calculationOfAge(medicalRecord) > 18;
+        return calculationOfAge(medicalRecord) > minAgeAdult;
     }
 
     @Override
-    public int calculationOfAge(MedicalRecord medicalRecord) {
-        logger.debug("calculationOfAge has been called, parameter -> " +
-                "medicalRecord = " + medicalRecord);
+    public int calculationOfAge(final MedicalRecord medicalRecord) {
+        LOGGER.debug("calculationOfAge has been called, parameter -> "
+                + "medicalRecord = " + medicalRecord);
 
         LocalDate today = LocalDate.now();
         String[] dayMonthYear = medicalRecord.getBirthdate().split("/");
@@ -58,9 +64,10 @@ public class MedicalRecordServiceImpl implements IMedicalRecordService{
     }
 
     @Override
-    public List<Person> getOnlyChildInPersonList(List<Person> personList) {
-        logger.debug("getOnlyChildPersonList has been called, parameter-> " +
-                "list of person = " + personList);
+    public List<Person> getOnlyChildInPersonList(
+            final List<Person> personList) {
+        LOGGER.debug("getOnlyChildPersonList has been called, parameter-> "
+                + "list of person = " + personList);
 
         return personList.stream()
                 .filter(person -> !(isAnAdult(person.getMedicalRecord())))
@@ -68,9 +75,9 @@ public class MedicalRecordServiceImpl implements IMedicalRecordService{
     }
 
     @Override
-    public List<Person> getOnlyAdultPersonList(List<Person> personList) {
-        logger.debug("getOnlyAdultPersonList has been called, parameter -> a " +
-                "list of person= " + personList);
+    public List<Person> getOnlyAdultPersonList(final List<Person> personList) {
+        LOGGER.debug("getOnlyAdultPersonList has been called, parameter -> a "
+                + "list of person= " + personList);
 
         return personList.stream()
                 .filter(person -> isAnAdult(person.getMedicalRecord()))
@@ -78,9 +85,9 @@ public class MedicalRecordServiceImpl implements IMedicalRecordService{
     }
 
     @Override
-    public ChildAlertDTO getChildAlertDTO(List<Person> persons) {
-        logger.debug("getChildAlertDTO has been called, parameter -> a list " +
-                "of person = " + persons);
+    public ChildAlertDTO getChildAlertDTO(final List<Person> persons) {
+        LOGGER.debug("getChildAlertDTO has been called, parameter -> a list "
+                + "of person = " + persons);
 
         ChildAlertMapper mapper = new ChildAlertMapperImpl();
         List<PersonChildDTO> personChildren =
@@ -94,9 +101,9 @@ public class MedicalRecordServiceImpl implements IMedicalRecordService{
     }
 
     @Override
-    public FireAlertDTO getFireAlert(List<Person> persons) {
-        logger.debug("getFireAlert has been called, parameter -> a list of " +
-                        "person = " + persons);
+    public FireAlertDTO getFireAlert(final List<Person> persons) {
+        LOGGER.debug("getFireAlert has been called, parameter -> a list of "
+                + "person = " + persons);
 
         ChildAlertMapper mapper = new ChildAlertMapperImpl();
         List<PersonFireDTO> personFireDTOS = persons.stream()
@@ -111,9 +118,10 @@ public class MedicalRecordServiceImpl implements IMedicalRecordService{
     }
 
     @Override
-    public Map<String, List<PersonFireDTO>> getFloodAlert(List<Person> persons) {
-        logger.debug("getFloodAlert has been called, parameter -> a list of " +
-                        "person = " + persons);
+    public Map<String, List<PersonFireDTO>> getFloodAlert(
+            final List<Person> persons) {
+        LOGGER.debug("getFloodAlert has been called, parameter -> a list of "
+                + "person = " + persons);
 
         ChildAlertMapper mapper = new ChildAlertMapperImpl();
 
@@ -123,17 +131,21 @@ public class MedicalRecordServiceImpl implements IMedicalRecordService{
                 .stream()
                 .collect(Collectors.toMap(Map.Entry::getKey,
                         v -> v.getValue().stream()
-                                .map(p -> mapper.personToPersonFireDTO(p, calculationOfAge(p.getMedicalRecord())))
+                                .map(p -> mapper
+                                        .personToPersonFireDTO(
+                                                p, calculationOfAge(
+                                                        p.getMedicalRecord())))
                                 .collect(Collectors.toList())));
     }
 
     @Override
-    public boolean saveMedicalRecord(MedicalRecord medicalRecord) throws RuntimeException {
-        logger.debug("saveMedicalRecord has been called, parameter -> " +
-                "medicalRecord = " + medicalRecord);
+    public boolean saveMedicalRecord(final MedicalRecord medicalRecord)
+            throws RuntimeException {
+        LOGGER.debug("saveMedicalRecord has been called, parameter -> "
+                + "medicalRecord = " + medicalRecord);
 
         if (!(medicalRecordRepository.saveMedicalRecord(medicalRecord))) {
-            logger.error("error while saved");
+            LOGGER.error("error while saved");
             throw new RuntimeException("error while saved");
         }
 
@@ -141,15 +153,17 @@ public class MedicalRecordServiceImpl implements IMedicalRecordService{
     }
 
     @Override
-    public MedicalRecord updateMedicalRecord(int id, MedicalRecordUpdateDTO mR) throws NotFoundException {
-        logger.debug(String.format("updateMedicalRecord has been called, " +
-                "parameters -> id = %d, medicalRecord = %s", id, mR));
+    public MedicalRecord updateMedicalRecord(
+            final int id, final MedicalRecordUpdateDTO mR)
+            throws NotFoundException {
+        LOGGER.debug(String.format("updateMedicalRecord has been called, "
+                + "parameters -> id = %d, medicalRecord = %s", id, mR));
 
         Optional<MedicalRecord> medicalRecord =
                 medicalRecordRepository.getMedicalRecordById(id);
         if (medicalRecord.isEmpty()) {
-            logger.error(String.format("medical record with id = %d has been " +
-                    "not found", id));
+            LOGGER.error(String.format("medical record with id = %d has been "
+                    + "not found", id));
             throw new NotFoundException("medical record id not found");
         }
 
@@ -167,14 +181,18 @@ public class MedicalRecordServiceImpl implements IMedicalRecordService{
     }
 
     @Override
-    public void deleteMedicalRecord(String lastName, String firstName) throws NotFoundException {
-        logger.debug(String.format("deleteMedicalRecord has been called, " +
-                "parameters -> lastName = %s, firstName = %s", lastName, firstName));
+    public void deleteMedicalRecord(
+            final String lastName, final String firstName)
+            throws NotFoundException {
+        LOGGER.debug(String.format("deleteMedicalRecord has been called, "
+                + "parameters -> lastName = %s, firstName = %s", lastName,
+                firstName));
 
         Optional<MedicalRecord> medicalRecord =
-                medicalRecordRepository.getPersonByLastNameAndFirstName(lastName, firstName);
+                medicalRecordRepository
+                        .getPersonByLastNameAndFirstName(lastName, firstName);
         if (medicalRecord.isEmpty()) {
-            logger.error("medical record has been not found");
+            LOGGER.error("medical record has been not found");
             throw new NotFoundException("medical record not found");
         }
 

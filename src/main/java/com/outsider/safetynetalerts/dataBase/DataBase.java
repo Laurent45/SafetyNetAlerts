@@ -26,19 +26,27 @@ public class DataBase {
     public void init() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
 
-        TypeReference<List<Person>> tRPerson = new TypeReference<>() {
-        };
-        InputStream iSPerson = TypeReference.class.getResourceAsStream("/json/persons.json");
-        TypeReference<List<FireStation>> tRFireStation = new TypeReference<>() {
-                };
-        InputStream iSFireStation = TypeReference.class.getResourceAsStream("/json/fireStations.json");
-        TypeReference<List<MedicalRecord>> tRMedicalRecord = new TypeReference<>() {
-                };
-        InputStream iSMedicalRecord = TypeReference.class.getResourceAsStream("/json/medicalRecords.json");
+        TypeReference<List<Person>> tRPerson =
+                new TypeReference<>() { };
+        InputStream iSPerson = TypeReference.class
+                .getResourceAsStream("/json/persons.json");
 
-        this.personList = mapper.readValue(iSPerson, tRPerson);
-        this.fireStationList = mapper.readValue(iSFireStation, tRFireStation);
-        this.medicalRecordList = mapper.readValue(iSMedicalRecord, tRMedicalRecord);
+        TypeReference<List<FireStation>> tRFireStation =
+                new TypeReference<>() { };
+        InputStream iSFireStation = TypeReference.class
+                .getResourceAsStream("/json/fireStations.json");
+
+        TypeReference<List<MedicalRecord>> tRMedicalRecord =
+                new TypeReference<>() { };
+        InputStream iSMedicalRecord = TypeReference.class
+                .getResourceAsStream("/json/medicalRecords.json");
+
+        this.personList = mapper
+                .readValue(iSPerson, tRPerson);
+        this.fireStationList = mapper
+                .readValue(iSFireStation, tRFireStation);
+        this.medicalRecordList = mapper
+                .readValue(iSMedicalRecord, tRMedicalRecord);
     }
 
     @PostConstruct
@@ -70,6 +78,4 @@ public class DataBase {
             }
         });
     }
-
-
 }
