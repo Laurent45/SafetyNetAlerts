@@ -5,10 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.outsider.safetynetalerts.model.FireStation;
 import com.outsider.safetynetalerts.model.MedicalRecord;
 import com.outsider.safetynetalerts.model.Person;
+import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
